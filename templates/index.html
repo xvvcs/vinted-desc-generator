@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vinted Description Generator</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      .drop-zone {
+        border: 2px dashed #cbd5e0;
+        transition: all 0.3s ease;
+      }
+      .drop-zone:hover,
+      .drop-zone.dragover {
+        border-color: #4299e1;
+        background-color: #ebf8ff;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-3xl">
+      <h1 class="text-3xl font-bold text-center mb-8 text-gray-800">
+        Vinted Description Generator
+      </h1>
+
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <form id="uploadForm" class="space-y-6">
+          <!-- Image Upload -->
+          <div class="space-y-2">
+            <label class="block text-sm font-medium text-gray-700"
+              >Upload Images</label
+            >
+            <div
+              class="drop-zone rounded-lg p-6 text-center cursor-pointer"
+              id="dropZone"
+            >
+              <input
+                type="file"
+                id="fileInput"
+                multiple
+                accept="image/*"
+                class="hidden"
+              />
+              <div class="text-gray-500">
+                <svg
+                  class="mx-auto h-12 w-12 mb-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                  />
+                </svg>
+                <p>Drag and drop images here or click to select</p>
+                <p class="text-sm mt-1">Supported formats: JPG, PNG</p>
+              </div>
+            </div>
+            <div id="imagePreview" class="grid grid-cols-2 gap-4 mt-4"></div>
+          </div>
+
+          <!-- Measurements -->
+          <div class="space-y-2">
+            <label class="block text-sm font-medium text-gray-700"
+              >Measurements</label
+            >
+            <textarea
+              id="measurements"
+              rows="3"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              placeholder="Enter measurements (e.g., Chest: 40cm, Length: 60cm)"
+            ></textarea>
+          </div>
+
+          <!-- Style Selection -->
+          <div class="space-y-2">
+            <label class="block text-sm font-medium text-gray-700"
+              >Description Style</label
+            >
+            <select
+              id="style"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            >
+              <option value="professional">Professional</option>
+              <option value="casual">Casual</option>
+              <option value="detailed">Detailed</option>
+              <option value="minimal">Minimal</option>
+            </select>
+          </div>
+
+          <!-- Generate Button -->
+          <button
+            type="submit"
+            class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+          >
+            Generate Description
+          </button>
+        </form>
+
+        <!-- Result -->
+        <div id="result" class="mt-6 hidden">
+          <h2 class="text-lg font-medium text-gray-900 mb-2">
+            Generated Description
+          </h2>
+          <div class="bg-gray-50 rounded-md p-4">
+            <p id="description" class="text-gray-700 whitespace-pre-wrap"></p>
+          </div>
+          <button
+            id="copyButton"
+            class="mt-4 text-sm text-blue-600 hover:text-blue-800"
+          >
+            Copy to Clipboard
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const dropZone = document.getElementById("dropZone");
+      const fileInput = document.getElementById("fileInput");
+      const imagePreview = document.getElementById("imagePreview");
+      const uploadForm = document.getElementById("uploadForm");
+      const result = document.getElementById("result");
+      const description = document.getElementById("description");
+      const copyButton = document.getElementById("copyButton");
+
+      // Drag and drop handlers
+      dropZone.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropZone.classList.add("dragover");
+      });
+
+      dropZone.addEventListener("dragleave", () => {
+        dropZone.classList.remove("dragover");
+      });
+
+      dropZone.addEventListener("drop", (e) => {
+        e.preventDefault();
+        dropZone.classList.remove("dragover");
+        fileInput.files = e.dataTransfer.files;
+        handleFiles(e.dataTransfer.files);
+      });
+
+      dropZone.addEventListener("click", () => {
+        fileInput.click();
+      });
+
+      fileInput.addEventListener("change", (e) => {
+        handleFiles(e.target.files);
+      });
+
+      function handleFiles(files) {
+        imagePreview.innerHTML = "";
+        Array.from(files).forEach((file) => {
+          if (file.type.startsWith("image/")) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              const img = document.createElement("img");
+              img.src = e.target.result;
+              img.className = "w-full h-48 object-cover rounded-md";
+              imagePreview.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+      }
+
+      uploadForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData();
+        const files = fileInput.files;
+        for (let i = 0; i < files.length; i++) {
+          formData.append("images", files[i]);
+        }
+        formData.append(
+          "measurements",
+          document.getElementById("measurements").value
+        );
+        formData.append("style", document.getElementById("style").value);
+
+        try {
+          const response = await fetch("/generate", {
+            method: "POST",
+            body: formData,
+          });
+          const data = await response.json();
+
+          if (data.error) {
+            alert(data.error);
+            return;
+          }
+
+          description.textContent = data.description;
+          result.classList.remove("hidden");
+        } catch (error) {
+          alert("Error generating description. Please try again.");
+        }
+      });
+
+      copyButton.addEventListener("click", () => {
+        navigator.clipboard
+          .writeText(description.textContent)
+          .then(() => {
+            copyButton.textContent = "Copied!";
+            setTimeout(() => {
+              copyButton.textContent = "Copy to Clipboard";
+            }, 2000);
+          })
+          .catch((err) => {
+            console.error("Failed to copy text: ", err);
+          });
+      });
+    </script>
+  </body>
+</html>
