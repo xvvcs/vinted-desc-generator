@@ -130,7 +130,7 @@
       .theme-toggle {
         position: fixed;
         top: 20px;
-        right: 80px;
+        right: 140px;
         z-index: 1001;
         background-color: var(--card-background);
         border: 1px solid var(--border-color);
@@ -239,6 +239,49 @@
         color: var(--text-primary);
       }
 
+      .upload-area {
+        border: 2px dashed var(--border-color);
+        border-radius: 12px;
+        padding: 2rem;
+        text-align: center;
+        background-color: var(--card-background);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .upload-area:hover, .upload-area.dragover {
+        border-color: var(--primary-color);
+        background-color: rgba(99, 102, 241, 0.05);
+      }
+
+      .upload-area input[type="file"] {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        opacity: 0;
+        cursor: pointer;
+      }
+
+      .upload-icon {
+        font-size: 3rem;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+      }
+
+      .upload-text {
+        color: var(--text-secondary);
+        margin-bottom: 0.5rem;
+      }
+
+      .upload-hint {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+      }
+
       #imagePreview {
         display: flex;
         flex-wrap: wrap;
@@ -247,6 +290,35 @@
         background-color: var(--card-background);
         border-radius: 12px;
         box-shadow: 0 2px 4px var(--shadow-color);
+        margin-top: 1rem;
+      }
+
+      .image-preview-container {
+        position: relative;
+        display: inline-block;
+      }
+
+      .remove-image {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background-color: #ef4444;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 0.75rem;
+        transition: all 0.2s ease;
+      }
+
+      .remove-image:hover {
+        transform: scale(1.1);
+        background-color: #dc2626;
       }
 
       .container {
@@ -354,6 +426,14 @@
         </select>
         <div class="form-text">Hold Ctrl/Cmd to select multiple languages</div>
       </div>
+      <div class="mb-4">
+        <label for="preferredStyle" class="form-label">Preferred Style</label>
+        <select class="form-select" id="preferredStyle">
+          <option value="professional">Professional</option>
+          <option value="casual">Casual</option>
+          <option value="detailed">Detailed</option>
+        </select>
+      </div>
       <button class="btn btn-primary" onclick="saveSettings()">
         Save Settings
       </button>
@@ -365,15 +445,22 @@
       <form id="uploadForm" class="mb-4">
         <div class="mb-4">
           <label for="images" class="form-label">Upload Images</label>
-          <input
-            type="file"
-            class="form-control"
-            id="images"
-            name="images"
-            multiple
-            accept="image/*"
-            required
-          />
+          <div class="upload-area" id="uploadArea">
+            <input
+              type="file"
+              id="images"
+              name="images"
+              multiple
+              accept="image/*"
+              required
+            />
+            <div class="upload-icon">
+              <i class="fas fa-cloud-upload-alt"></i>
+            </div>
+            <div class="upload-text">Drag and drop images here</div>
+            <div class="upload-hint">or click to select files</div>
+          </div>
+          <div id="imagePreview" class="mt-3"></div>
         </div>
 
         <div class="mb-4">
@@ -429,8 +516,6 @@
         </button>
       </form>
 
-      <div id="imagePreview" class="mb-4"></div>
-
       <div id="result" class="mt-4" style="display: none">
         <h3>Generated Description</h3>
         <div class="card">
@@ -453,6 +538,8 @@
       const languagesSelect = document.getElementById("languages");
       const preferredLanguagesSelect =
         document.getElementById("preferredLanguages");
+      const preferredStyleSelect = document.getElementById("preferredStyle");
+      const styleSelect = document.getElementById("style");
       const settingsPanel = document.getElementById("settingsPanel");
       const themeToggle = document.querySelector(".theme-toggle i");
 
@@ -493,6 +580,12 @@
           preferredLanguagesSelect.value = ["en"];
           languagesSelect.value = ["en"];
         }
+
+        const savedStyle = localStorage.getItem("preferredStyle");
+        if (savedStyle) {
+          preferredStyleSelect.value = savedStyle;
+          styleSelect.value = savedStyle;
+        }
       }
 
       // Save settings to localStorage
@@ -507,6 +600,11 @@
         Array.from(languagesSelect.options).forEach((option) => {
           option.selected = selectedLanguages.includes(option.value);
         });
+
+        const selectedStyle = preferredStyleSelect.value;
+        localStorage.setItem("preferredStyle", selectedStyle);
+        styleSelect.value = selectedStyle;
+
         toggleSettings();
         showToast("Settings saved successfully!");
       }
@@ -535,21 +633,67 @@
       }
 
       // Handle image preview
-      imageInput.addEventListener("change", (e) => {
+      imageInput.addEventListener("change", handleImagePreview);
+      
+      // Drag and drop handlers
+      const uploadArea = document.getElementById("uploadArea");
+      
+      uploadArea.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        uploadArea.classList.add("dragover");
+      });
+
+      uploadArea.addEventListener("dragleave", () => {
+        uploadArea.classList.remove("dragover");
+      });
+
+      uploadArea.addEventListener("drop", (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove("dragover");
+        imageInput.files = e.dataTransfer.files;
+        handleImagePreview();
+      });
+
+      function handleImagePreview() {
         imagePreview.innerHTML = "";
-        Array.from(e.target.files).forEach((file) => {
+        Array.from(imageInput.files).forEach((file, index) => {
           if (file.type.startsWith("image/")) {
             const reader = new FileReader();
             reader.onload = (e) => {
+              const container = document.createElement("div");
+              container.className = "image-preview-container";
+              
               const img = document.createElement("img");
               img.src = e.target.result;
               img.className = "preview-image";
-              imagePreview.appendChild(img);
+              
+              const removeBtn = document.createElement("button");
+              removeBtn.className = "remove-image";
+              removeBtn.innerHTML = "×";
+              removeBtn.onclick = () => removeImage(index);
+              
+              container.appendChild(img);
+              container.appendChild(removeBtn);
+              imagePreview.appendChild(container);
             };
             reader.readAsDataURL(file);
           }
         });
-      });
+      }
+
+      function removeImage(index) {
+        const dt = new DataTransfer();
+        const { files } = imageInput;
+        
+        for (let i = 0; i < files.length; i++) {
+          if (i !== index) {
+            dt.items.add(files[i]);
+          }
+        }
+        
+        imageInput.files = dt.files;
+        handleImagePreview();
+      }
 
       // Handle form submission
       uploadForm.addEventListener("submit", async (e) => {
