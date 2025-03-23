@@ -1,10 +1,22 @@
-# Vinted Description Generator
+<div align="center">
+
+# Vintly
 
 A powerful tool that generates professional, multilingual descriptions for Vinted listings using AI. Upload your product images and get detailed, SEO-optimized descriptions in multiple languages.
 
-## Logo
+![Vintly Logo](img/vintly-logo.png)
 
-[Logo placeholder - Add your logo here]
+<div align="center">
+  
+[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
+[![Flask](https://img.shields.io/badge/Flask-3.0.2-lightgrey.svg)](https://flask.palletsprojects.com/)
+[![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-3.1.1-red.svg)](https://www.sqlalchemy.org/)
+[![Google Gemini AI](https://img.shields.io/badge/Gemini_AI-0.3.2-green.svg)](https://ai.google.dev/)
+[![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3-purple.svg)](https://getbootstrap.com/)
+[![JavaScript](https://img.shields.io/badge/JavaScript-ES6-yellow.svg)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+
+</div>
+</div>
 
 ## Features
 
