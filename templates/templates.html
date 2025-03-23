@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vinted Description Templates</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary-color: #4f46e5;
+        --primary-hover: #4338ca;
+        --secondary-color: #64748b;
+        --background-color: #f8fafc;
+        --card-background: #ffffff;
+        --border-color: #e2e8f0;
+        --text-primary: #1e293b;
+        --text-secondary: #64748b;
+        --shadow-color: rgba(0, 0, 0, 0.1);
+      }
+
+      [data-theme="dark"] {
+        --primary-color: #6366f1;
+        --primary-hover: #4f46e5;
+        --secondary-color: #94a3b8;
+        --background-color: #0f172a;
+        --card-background: #1e293b;
+        --border-color: #334155;
+        --text-primary: #f1f5f9;
+        --text-secondary: #cbd5e1;
+        --shadow-color: rgba(0, 0, 0, 0.3);
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: var(--background-color);
+        color: var(--text-primary);
+        line-height: 1.6;
+        transition: background-color 0.3s ease, color 0.3s ease;
+      }
+
+      .navbar {
+        background-color: var(--card-background) !important;
+        box-shadow: 0 1px 3px var(--shadow-color);
+        padding: 1rem 0;
+      }
+
+      .navbar-brand {
+        font-weight: 700;
+        color: var(--primary-color) !important;
+        font-size: 1.5rem;
+      }
+
+      .nav-link {
+        color: var(--text-secondary) !important;
+        font-weight: 500;
+        transition: color 0.2s ease;
+      }
+
+      .nav-link:hover {
+        color: var(--primary-color) !important;
+      }
+
+      .container {
+        max-width: 800px;
+        padding: 2rem 1rem;
+      }
+
+      h1 {
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 2rem;
+      }
+
+      h3 {
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 1rem;
+      }
+
+      .form-control,
+      .form-select {
+        background-color: var(--card-background);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        transition: all 0.2s ease;
+        color: var(--text-primary);
+      }
+
+      .form-control:focus,
+      .form-select:focus {
+        background-color: var(--card-background);
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        color: var(--text-primary);
+      }
+
+      .form-label {
+        font-weight: 500;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+      }
+
+      .form-text {
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+      }
+
+      .btn-primary {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        padding: 0.75rem 1.5rem;
+        font-weight: 500;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+      }
+
+      .btn-primary:hover {
+        background-color: var(--primary-hover);
+        border-color: var(--primary-hover);
+        transform: translateY(-1px);
+      }
+
+      .btn-secondary {
+        background-color: var(--secondary-color);
+        border-color: var(--secondary-color);
+        padding: 0.75rem 1.5rem;
+        font-weight: 500;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+      }
+
+      .btn-secondary:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+      }
+
+      .card {
+        background-color: var(--card-background);
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px var(--shadow-color);
+        transition: transform 0.2s ease;
+        margin-bottom: 1rem;
+      }
+
+      .card:hover {
+        transform: translateY(-2px);
+      }
+
+      .card-body {
+        padding: 1.5rem;
+      }
+
+      .card-text {
+        white-space: pre-wrap;
+        color: var(--text-primary);
+      }
+
+      .template-card {
+        position: relative;
+      }
+
+      .delete-btn {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: none;
+        border: none;
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: color 0.2s ease;
+      }
+
+      .delete-btn:hover {
+        color: #ef4444;
+      }
+
+      /* Theme Toggle */
+      .theme-toggle {
+        position: fixed;
+        top: 20px;
+        right: 80px;
+        z-index: 1001;
+        background-color: var(--card-background);
+        border: 1px solid var(--border-color);
+        padding: 0.5rem;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 4px var(--shadow-color);
+      }
+
+      .theme-toggle:hover {
+        transform: scale(1.1);
+      }
+
+      .theme-toggle i {
+        font-size: 1.2rem;
+        color: var(--text-primary);
+        transition: transform 0.3s ease;
+      }
+
+      .theme-toggle:hover i {
+        transform: rotate(180deg);
+      }
+
+      /* Toast Notification */
+      .toast-notification {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: var(--card-background);
+        color: var(--text-primary);
+        padding: 1rem 2rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px var(--shadow-color);
+        transform: translateY(100px);
+        opacity: 0;
+        transition: all 0.3s ease;
+        z-index: 1000;
+      }
+
+      .toast-notification.show {
+        transform: translateY(0);
+        opacity: 1;
+      }
+
+      /* Loading state */
+      .loading {
+        position: relative;
+        pointer-events: none;
+        opacity: 0.7;
+      }
+
+      .loading::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 2rem;
+        height: 2rem;
+        margin: -1rem 0 0 -1rem;
+        border: 3px solid var(--border-color);
+        border-top-color: var(--primary-color);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light">
+      <div class="container">
+        <a class="navbar-brand" href="/">Vinted Description Generator</a>
+        <div class="navbar-nav">
+          <a class="nav-link" href="/">Home</a>
+          <a class="nav-link active" href="/templates">Templates</a>
+        </div>
+      </div>
+    </nav>
+
+    <button class="theme-toggle" onclick="toggleTheme()">
+      <i class="fas fa-moon"></i>
+    </button>
+
+    <div class="container">
+      <h1>Description Templates</h1>
+
+      <form id="templateForm" class="mb-4">
+        <div class="mb-4">
+          <label for="templateName" class="form-label">Template Name</label>
+          <input
+            type="text"
+            class="form-control"
+            id="templateName"
+            name="templateName"
+            required
+            placeholder="Enter a name for this template"
+          />
+        </div>
+
+        <div class="mb-4">
+          <label for="exampleDescription" class="form-label"
+            >Example Description</label
+          >
+          <textarea
+            class="form-control"
+            id="exampleDescription"
+            name="exampleDescription"
+            rows="5"
+            required
+            placeholder="Enter an example description that shows the desired format"
+          ></textarea>
+        </div>
+
+        <div class="mb-4">
+          <label for="templateCategory" class="form-label">Category</label>
+          <select
+            class="form-select"
+            id="templateCategory"
+            name="templateCategory"
+          >
+            <option value="clothing">Clothing</option>
+            <option value="shoes">Shoes</option>
+            <option value="accessories">Accessories</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Add Template</button>
+      </form>
+
+      <div id="templatesList" class="mt-4">
+        <!-- Templates will be loaded here -->
+      </div>
+    </div>
+
+    <script>
+      const templateForm = document.getElementById("templateForm");
+      const templatesList = document.getElementById("templatesList");
+      const themeToggle = document.querySelector(".theme-toggle i");
+
+      // Load theme from localStorage
+      function loadTheme() {
+        const theme = localStorage.getItem("theme") || "light";
+        document.body.setAttribute("data-theme", theme);
+        updateThemeIcon(theme);
+      }
+
+      // Toggle theme
+      function toggleTheme() {
+        const currentTheme = document.body.getAttribute("data-theme");
+        const newTheme = currentTheme === "light" ? "dark" : "light";
+        document.body.setAttribute("data-theme", newTheme);
+        localStorage.setItem("theme", newTheme);
+        updateThemeIcon(newTheme);
+      }
+
+      // Update theme icon
+      function updateThemeIcon(theme) {
+        themeToggle.className =
+          theme === "light" ? "fas fa-moon" : "fas fa-sun";
+      }
+
+      // Show toast notification
+      function showToast(message) {
+        const toast = document.createElement("div");
+        toast.className = "toast-notification";
+        toast.textContent = message;
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+          toast.classList.add("show");
+          setTimeout(() => {
+            toast.classList.remove("show");
+            setTimeout(() => {
+              document.body.removeChild(toast);
+            }, 300);
+          }, 2000);
+        }, 100);
+      }
+
+      // Load templates
+      async function loadTemplates() {
+        try {
+          const response = await fetch("/api/templates");
+          const templates = await response.json();
+          templatesList.innerHTML = "";
+
+          templates.forEach((template) => {
+            const card = document.createElement("div");
+            card.className = "card template-card";
+            card.innerHTML = `
+              <div class="card-body">
+                <button class="delete-btn" onclick="deleteTemplate('${template.id}')">
+                  <i class="fas fa-trash"></i>
+                </button>
+                <h5 class="card-title">${template.name}</h5>
+                <p class="card-text">${template.description}</p>
+                <span class="badge bg-secondary">${template.category}</span>
+              </div>
+            `;
+            templatesList.appendChild(card);
+          });
+        } catch (error) {
+          console.error("Error loading templates:", error);
+          showToast("Error loading templates");
+        }
+      }
+
+      // Handle form submission
+      templateForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const templateData = {
+          name: document.getElementById("templateName").value,
+          description: document.getElementById("exampleDescription").value,
+          category: document.getElementById("templateCategory").value,
+        };
+
+        try {
+          const response = await fetch("/api/templates", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(templateData),
+          });
+
+          if (response.ok) {
+            templateForm.reset();
+            loadTemplates();
+            showToast("Template added successfully!");
+          } else {
+            const data = await response.json();
+            showToast(data.error || "Error adding template");
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          showToast("Error adding template");
+        }
+      });
+
+      // Delete template
+      async function deleteTemplate(templateId) {
+        if (!confirm("Are you sure you want to delete this template?")) {
+          return;
+        }
+
+        try {
+          const response = await fetch(`/api/templates/${templateId}`, {
+            method: "DELETE",
+          });
+
+          if (response.ok) {
+            loadTemplates();
+            showToast("Template deleted successfully!");
+          } else {
+            const data = await response.json();
+            showToast(data.error || "Error deleting template");
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          showToast("Error deleting template");
+        }
+      }
+
+      // Load theme and templates when page loads
+      loadTheme();
+      loadTemplates();
+    </script>
+  </body>
+</html>
