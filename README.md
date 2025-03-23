@@ -56,8 +56,8 @@ cd vinDesc
 2. Create and activate a virtual environment (recommended):
 
 ```bash
-python -m venv venv
-source venv/bin/activate  # On Windows, use: venv\Scripts\activate
+python -m venv .venv
+source .venv/bin/activate  # On Windows, use: .venv\Scripts\activate
 ```
 
 3. Install required packages:
@@ -85,6 +85,8 @@ The application will be available at `http://localhost:5000`
 1. **Upload Images**
 
    - Drag and drop images or click to select files
+   - Supported formats: PNG, JPG, JPEG
+   - Maximum file size: 16MB
    - Preview and remove images before generating description
 
 2. **Configure Settings**
@@ -105,7 +107,13 @@ The application will be available at `http://localhost:5000`
    - Wait for AI to process your images
    - Copy the generated description to clipboard
 
-5. **Theme Toggle**
+5. **Manage Templates**
+
+   - Access the templates page to manage your description templates
+   - Add, edit, or delete custom templates
+   - Templates are saved automatically
+
+6. **Theme Toggle**
    - Use the moon/sun icon to switch between light and dark modes
 
 ## Contributing
