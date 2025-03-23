@@ -32,7 +32,9 @@ A powerful tool that generates professional, multilingual descriptions for Vinte
 
 ## Video Demo
 
-[Video placeholder - Add a short video demonstrating the application's features]
+<div align="center">
+  <img src="img/showcase.gif" alt="Vintly Demo">
+</div>
 
 ## Installation
 
