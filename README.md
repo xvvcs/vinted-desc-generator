@@ -50,7 +50,7 @@ A powerful tool that generates professional, multilingual descriptions for Vinte
 
 ```bash
 git clone https://github.com/xvvcs/vinted-desc-generator.git
-cd vinDesc
+cd vinted-desc-generator
 ```
 
 2. Create and activate a virtual environment (recommended):
@@ -79,13 +79,14 @@ GOOGLE_API_KEY=your_api_key_here
 python app.py
 ```
 
-The application will be available at `http://localhost:5000`
+The application will be available at `http://localhost:5000`.
+You can also check the ip address while Flask serving, in cmd 
 
 ## Usage
 
 1. **Upload Images**
 
-   - Drag and drop images or click to select files
+   - Drag and drop images or click to select files (currently supporting single image ONLY)
    - Supported formats: PNG, JPG, JPEG
    - Maximum file size: 16MB
    - Preview and remove images before generating description
