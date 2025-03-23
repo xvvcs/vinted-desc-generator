@@ -49,7 +49,7 @@ A powerful tool that generates professional, multilingual descriptions for Vinte
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/vinDesc.git
+git clone https://github.com/xvvcs/vinted-desc-generator.git
 cd vinDesc
 ```
 
@@ -71,6 +71,7 @@ pip install -r requirements.txt
 ```
 GOOGLE_API_KEY=your_api_key_here
 ```
+*Remember to not share it with outsiders!*
 
 5. Run the application:
 
@@ -118,7 +119,7 @@ The application will be available at `http://localhost:5000`
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! Please feel free to submit a Pull Request or send me a dm.
 
 ## License
 
