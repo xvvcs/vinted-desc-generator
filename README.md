@@ -36,12 +36,17 @@ A powerful tool that generates professional, multilingual descriptions for Vinte
   <img src="img/showcase.gif" alt="Vintly Demo">
 </div>
 
-## ⚡ Quick Start Guide (For Beginners)
+### ⚡ Quick Windows Installation ⚡
 
-1. **Download & Install**: Download the ZIP, extract it, install Python 3.8+
-2. **Set Up**: Create `.env` file with your Google API key
-3. **Run**: Open terminal in the folder and run `python app.py`
-4. **Use**: Open your web browser and go to `http://localhost:5001`
+For Windows users, we've created a simplified installation process:
+
+1. Download and extract the ZIP file
+2. Double-click on `setup_windows.bat`
+3. Follow the prompts to install dependencies and enter your Google API key
+4. When setup completes, choose "Y" to start Vintly immediately, or
+5. Double-click `run_vintly.bat` anytime you want to start the application
+
+The setup script takes care of everything - no need to manually create files or edit configurations!
 
 Need more details? Follow the complete installation steps below.
 
