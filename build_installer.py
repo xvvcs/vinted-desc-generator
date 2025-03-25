@@ -83,7 +83,7 @@ exe = EXE(
     codesign_identity=None,
     entitlements_file=None,
     icon='img/vintly-icon.ico',
-    onefile=True  # Create a single file
+    onefile=True  # This setting in the spec file controls single-file output
 )
 '''
     
@@ -100,9 +100,8 @@ exe = EXE(
         "PyInstaller",
         "--clean",
         "--noconfirm",
-        "--onefile",  # Create a single file
         str(spec_path)
-    ], check=True)
+    ], check=True)  # Removed the --onefile flag since it's in the spec file
     
     # Clean up
     spec_path.unlink()
