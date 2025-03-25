@@ -2,6 +2,7 @@ import os
 import sys
 import subprocess
 import tkinter as tk
+from tkinter import ttk
 from tkinter import filedialog, messagebox
 import json
 import shutil

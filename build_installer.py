@@ -1,6 +1,6 @@
 import os
-import subprocess
 import sys
+import subprocess
 from pathlib import Path
 import tkinter as tk
 from tkinter import ttk  # Add this import for the progress bar
