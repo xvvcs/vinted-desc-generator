@@ -162,37 +162,44 @@ class VintlyInstaller:
         self.root.update()
     
     def start_installation(self):
-        install_dir = self.dir_entry.get()
-        api_key = self.api_entry.get()
-        
-        if not api_key:
-            messagebox.showerror("Error", "Please enter your Google API key")
-            return
+        # Disable the install button to prevent multiple clicks
+        self.install_button.config(state='disabled')
         
         try:
-            # Create installation directory
-            os.makedirs(install_dir, exist_ok=True)
-            self.update_status("Creating installation directory...", 10)
+            install_dir = self.dir_entry.get()
+            api_key = self.api_entry.get()
             
-            # Copy program files
-            self.update_status("Copying program files...", 20)
-            current_dir = os.path.dirname(os.path.abspath(__file__))
-            program_files = [
-                'app.py',
-                'requirements.txt',
-                'templates',
-                'img',
-                'config',
-                'templates.json'
-            ]
+            if not api_key:
+                messagebox.showerror("Error", "Please enter your Google API key")
+                self.install_button.config(state='normal')
+                return
             
-            for file in program_files:
-                src = os.path.join(current_dir, file)
-                dst = os.path.join(install_dir, file)
-                if os.path.isdir(src):
-                    shutil.copytree(src, dst, dirs_exist_ok=True)
+            # Extract embedded files instead of copying
+            self.update_status("Extracting program files...", 20)
+            try:
+                # Get the base path of the running executable
+                if getattr(sys, 'frozen', False):
+                    base_path = sys._MEIPASS
                 else:
-                    shutil.copy2(src, dst)
+                    base_path = os.path.dirname(os.path.abspath(__file__))
+                    
+                # Copy files from the embedded resources
+                for file in ['app.py', 'requirements.txt', 'templates', 'img', 'config', 'templates.json']:
+                    src = os.path.join(base_path, file)
+                    dst = os.path.join(install_dir, file)
+                    if os.path.exists(src):
+                        if os.path.isdir(src):
+                            shutil.copytree(src, dst, dirs_exist_ok=True)
+                        else:
+                            shutil.copy2(src, dst)
+                    else:
+                        raise FileNotFoundError(f"Required file not found: {file}")
+                    
+            except Exception as e:
+                self.log_error(f"Error extracting files: {str(e)}")
+                messagebox.showerror("Error", f"Failed to extract program files:\n{str(e)}")
+                self.install_button.config(state='normal')
+                return
             
             # Create .env file
             self.update_status("Creating configuration file...", 40)
@@ -312,7 +319,11 @@ $Shortcut.Save()
             self.root.quit()
             
         except Exception as e:
+            self.log_error(f"Installation failed: {str(e)}")
             messagebox.showerror("Error", f"An error occurred during installation:\n{str(e)}")
+        finally:
+            # Re-enable the install button
+            self.install_button.config(state='normal')
     
     def run(self):
         self.root.mainloop()

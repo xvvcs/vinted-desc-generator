@@ -27,7 +27,7 @@ block_cipher = None
 
 a = Analysis(
     ['installer.py'],
-    pathex=[r'{current_dir_str}'],  # Using raw string to handle Windows paths
+    pathex=[r'{current_dir_str}'],
     binaries=[],
     datas=[
         ('app.py', '.'),
@@ -37,7 +37,7 @@ a = Analysis(
         ('config', 'config'),
         ('templates.json', '.'),
     ],
-    hiddenimports=[],
+    hiddenimports=['tkinter', 'tkinter.ttk'],
     hookspath=[],
     hooksconfig={{}},
     runtime_hooks=[],
@@ -46,6 +46,7 @@ a = Analysis(
     win_private_assemblies=False,
     cipher=block_cipher,
     noarchive=False,
+    collect_all=['tkinter']
 )
 
 pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
