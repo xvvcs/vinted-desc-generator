@@ -11,8 +11,10 @@ def build_installer():
         print("Installing PyInstaller...")
         subprocess.run([sys.executable, "-m", "pip", "install", "pyinstaller"], check=True)
     
-    # Get the current directory and convert to proper path format
-    current_dir = str(Path(__file__).parent.absolute()).replace('\\', '/')
+    # Get the current directory
+    current_dir = Path(__file__).parent.absolute()
+    # Convert to string with forward slashes for the spec file
+    current_dir_str = str(current_dir).replace('\\', '/')
     
     # Create the spec file
     spec_content = f'''
@@ -22,7 +24,7 @@ block_cipher = None
 
 a = Analysis(
     ['installer.py'],
-    pathex=[r'{current_dir}'],  # Using raw string to handle Windows paths
+    pathex=[r'{current_dir_str}'],  # Using raw string to handle Windows paths
     binaries=[],
     datas=[
         ('app.py', '.'),
