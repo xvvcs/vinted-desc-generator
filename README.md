@@ -51,14 +51,14 @@ Need more details? Follow the complete installation steps below.
 
 Before you start, make sure you have these installed on your computer:
 
-1. **Python 3.8 or higher**
+1. **Python 3.12.9**
 
    Python is the programming language needed to run Vintly.
 
    - **Windows**:
 
      - Download from [Python's official website](https://www.python.org/downloads/)
-     - **IMPORTANT**: During installation, check the box that says "Add Python to PATH"
+     - **IMPORTANT**: During installation, check the box that says "Add Python to PATH". Make sure you install Python 3.12.9!!!
      - To verify installation: Open Command Prompt (search for "cmd" in Start menu) and type:
        ```
        python --version
@@ -104,7 +104,7 @@ Before you start, make sure you have these installed on your computer:
        cd Desktop/vintly
        ```
 
-3. **Set Up Python Environment**
+3. **Set Up Python Environment** (Optional)
 
    A virtual environment is like a separate space for Vintly that won't affect other programs.
 
@@ -156,7 +156,15 @@ Before you start, make sure you have these installed on your computer:
 
 5. **Set Up API Key**
 
-   - Create a new text file in the program folder
+   - Create a new text file in the program folder.
+     (You can do so by using nano):
+
+     ```
+     nano .env
+     ```
+
+     Or by doing it normal way:
+
    - Name it exactly `.env` (including the period at the beginning)
    - Open it with Notepad (Windows) or TextEdit (Mac)
    - Type ONLY this line, replacing with your actual API key:
@@ -168,7 +176,7 @@ Before you start, make sure you have these installed on your computer:
 
 6. **Run the Program**
 
-   - Make sure your virtual environment is active (you'll see `(.venv)` in your terminal)
+   - <i>(if used python environment) Make sure your virtual environment is active (you'll see `(.venv)` in your terminal)</i>
    - Run:
 
      **Windows**:
@@ -184,7 +192,7 @@ Before you start, make sure you have these installed on your computer:
      ```
 
    - You should see a message that says the server is running
-   - Open your web browser and go to: `http://localhost:5001`
+   - Open your web browser and go to: `http://your-ip:5001` **You can see the exact host ips in the cmd message after running the app**
 
 ### ❓ Troubleshooting
 
