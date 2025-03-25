@@ -2,7 +2,7 @@
 
 # Vintly
 
-A powerful tool that generates professional, multilingual descriptions for Vinted listings using AI. Upload your product images and get detailed, SEO-optimized descriptions in multiple languages.
+Quick? Effortless? Simple to use? That's Vintly, a powerful tool that generates professional, multilingual descriptions for Vinted listings using AI. Upload your product images and get detailed, SEO-optimized descriptions in multiple languages.
 
 ![Vintly Logo](img/vintly-logo.png)
 
