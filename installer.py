@@ -13,107 +13,121 @@ class VintlyInstaller:
     def __init__(self):
         self.root = tk.Tk()
         self.root.title("Vintly Installer")
-        self.root.geometry("600x400")
-        self.root.resizable(False, False)
+        self.root.geometry("700x600")
+        self.root.minsize(600, 500)  # Set minimum window size
         
-        # Center the window
-        self.center_window()
+        # Configure grid weight for resizing
+        self.root.grid_columnconfigure(0, weight=1)
+        self.root.grid_rowconfigure(0, weight=1)
         
-        # Create main frame
-        self.main_frame = tk.Frame(self.root, padx=20, pady=20)
-        self.main_frame.pack(expand=True, fill='both')
+        # Create main frame with padding and configure grid
+        self.main_frame = tk.Frame(self.root, padx=25, pady=25)
+        self.main_frame.grid(row=0, column=0, sticky="nsew")
+        self.main_frame.grid_columnconfigure(0, weight=1)
         
-        # Welcome message
+        # Welcome message with custom styling
         self.welcome_label = tk.Label(
             self.main_frame,
             text="Welcome to Vintly Installer",
-            font=("Helvetica", 16, "bold")
+            font=("Helvetica", 24, "bold"),
+            pady=20
         )
-        self.welcome_label.pack(pady=(0, 20))
+        self.welcome_label.grid(row=0, column=0, sticky="ew")
         
-        # Installation directory selection
-        self.dir_frame = tk.Frame(self.main_frame)
-        self.dir_frame.pack(fill='x', pady=10)
-        
-        self.dir_label = tk.Label(
-            self.dir_frame,
-            text="Installation Directory:",
-            font=("Helvetica", 10)
-        )
-        self.dir_label.pack(anchor='w')
+        # Installation directory frame
+        self.dir_frame = tk.LabelFrame(self.main_frame, text="Installation Location", padx=15, pady=10)
+        self.dir_frame.grid(row=1, column=0, sticky="ew", pady=(0, 15))
+        self.dir_frame.grid_columnconfigure(0, weight=1)
         
         self.dir_entry = tk.Entry(self.dir_frame)
-        self.dir_entry.pack(side='left', fill='x', expand=True, padx=(0, 10))
+        self.dir_entry.grid(row=0, column=0, sticky="ew", padx=(0, 10))
         
         self.browse_button = tk.Button(
             self.dir_frame,
             text="Browse",
-            command=self.browse_directory
+            command=self.browse_directory,
+            width=10
         )
-        self.browse_button.pack(side='right')
+        self.browse_button.grid(row=0, column=1)
         
-        # API Key input
-        self.api_frame = tk.Frame(self.main_frame)
-        self.api_frame.pack(fill='x', pady=10)
-        
-        self.api_label = tk.Label(
-            self.api_frame,
-            text="Google API Key:",
-            font=("Helvetica", 10)
-        )
-        self.api_label.pack(anchor='w')
+        # API Key frame
+        self.api_frame = tk.LabelFrame(self.main_frame, text="Google API Key", padx=15, pady=10)
+        self.api_frame.grid(row=2, column=0, sticky="ew", pady=(0, 15))
+        self.api_frame.grid_columnconfigure(0, weight=1)
         
         self.api_entry = tk.Entry(self.api_frame, show="*")
-        self.api_entry.pack(fill='x')
+        self.api_entry.grid(row=0, column=0, sticky="ew")
         
-        # Progress bar
+        # Progress section
+        self.progress_frame = tk.LabelFrame(self.main_frame, text="Installation Progress", padx=15, pady=10)
+        self.progress_frame.grid(row=3, column=0, sticky="nsew", pady=(0, 15))
+        self.progress_frame.grid_columnconfigure(0, weight=1)
+        self.progress_frame.grid_rowconfigure(1, weight=1)
+        
         self.progress_var = tk.DoubleVar()
         self.progress_bar = ttk.Progressbar(
-            self.main_frame,
+            self.progress_frame,
             variable=self.progress_var,
             maximum=100
         )
-        self.progress_bar.pack(fill='x', pady=(20, 5))
+        self.progress_bar.grid(row=0, column=0, sticky="ew", padx=5, pady=(5, 10))
         
-        # Log text widget
-        self.log_frame = tk.Frame(self.main_frame)
-        self.log_frame.pack(fill='both', expand=True, pady=(0, 10))
-        
+        # Log text widget with custom styling
         self.log_text = tk.Text(
-            self.log_frame,
+            self.progress_frame,
             height=8,
             width=50,
             font=("Consolas", 9),
-            bg='black',
-            fg='white'
+            bg='#1E1E1E',
+            fg='#D4D4D4',
+            padx=5,
+            pady=5
         )
-        self.log_text.pack(side='left', fill='both', expand=True)
+        self.log_text.grid(row=1, column=0, sticky="nsew", padx=5)
         
-        # Add scrollbar for logs
-        self.scrollbar = ttk.Scrollbar(self.log_frame, orient='vertical', command=self.log_text.yview)
-        self.scrollbar.pack(side='right', fill='y')
+        # Scrollbar for logs
+        self.scrollbar = ttk.Scrollbar(self.progress_frame, orient='vertical', command=self.log_text.yview)
+        self.scrollbar.grid(row=1, column=1, sticky="ns")
         self.log_text.configure(yscrollcommand=self.scrollbar.set)
         
-        # Status label
+        # Status label with custom styling
         self.status_label = tk.Label(
-            self.main_frame,
+            self.progress_frame,
             text="Ready to install",
-            font=("Helvetica", 10)
+            font=("Helvetica", 10),
+            pady=5
         )
-        self.status_label.pack()
+        self.status_label.grid(row=2, column=0, sticky="ew")
         
-        # Install button
+        # Bottom frame for install button
+        self.button_frame = tk.Frame(self.main_frame)
+        self.button_frame.grid(row=4, column=0, sticky="ew", pady=(0, 10))
+        self.button_frame.grid_columnconfigure(0, weight=1)
+        
+        # Install button with custom styling
         self.install_button = tk.Button(
-            self.main_frame,
+            self.button_frame,
             text="Install",
             command=self.start_installation,
-            font=("Helvetica", 12)
+            font=("Helvetica", 12, "bold"),
+            bg="#007BFF",
+            fg="white",
+            padx=30,
+            pady=10,
+            cursor="hand2"
         )
-        self.install_button.pack(pady=20)
+        self.install_button.grid(row=0, column=0)
+        
+        # Hover effect for install button
+        self.install_button.bind("<Enter>", lambda e: e.widget.configure(bg="#0056b3"))
+        self.install_button.bind("<Leave>", lambda e: e.widget.configure(bg="#007BFF"))
         
         # Set default installation directory
         default_dir = os.path.join(os.path.expanduser("~"), "Vintly")
         self.dir_entry.insert(0, default_dir)
+        
+        # Configure main frame grid weights for proper resizing
+        self.main_frame.grid_rowconfigure(3, weight=1)
         
     def center_window(self):
         self.root.update_idletasks()
