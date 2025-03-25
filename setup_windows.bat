@@ -1,4 +1,3 @@
-REM filepath: /Users/maciej/vinDesc/setup_windows.bat
 @echo off
 setlocal EnableDelayedExpansion
 title Vintly Installation
