@@ -129,6 +129,9 @@ class VintlyInstaller:
         # Configure main frame grid weights for proper resizing
         self.main_frame.grid_rowconfigure(3, weight=1)
         
+        # Add a flag to prevent multiple installations
+        self.is_installing = False
+        
     def center_window(self):
         self.root.update_idletasks()
         width = self.root.winfo_width()
@@ -162,7 +165,9 @@ class VintlyInstaller:
         self.root.update()
     
     def start_installation(self):
-        # Disable the install button to prevent multiple clicks
+        if self.is_installing:
+            return
+        self.is_installing = True
         self.install_button.config(state='disabled')
         
         try:
@@ -171,22 +176,23 @@ class VintlyInstaller:
             
             if not api_key:
                 messagebox.showerror("Error", "Please enter your Google API key")
-                self.install_button.config(state='normal')
                 return
             
-            # Extract embedded files instead of copying
+            # Get the base path for embedded files
+            base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
+            
+            # Create installation directory
+            os.makedirs(install_dir, exist_ok=True)
+            self.update_status("Creating installation directory...", 10)
+            
+            # Extract embedded files
             self.update_status("Extracting program files...", 20)
             try:
-                # Get the base path of the running executable
-                if getattr(sys, 'frozen', False):
-                    base_path = sys._MEIPASS
-                else:
-                    base_path = os.path.dirname(os.path.abspath(__file__))
-                    
-                # Copy files from the embedded resources
                 for file in ['app.py', 'requirements.txt', 'templates', 'img', 'config', 'templates.json']:
                     src = os.path.join(base_path, file)
                     dst = os.path.join(install_dir, file)
+                    self.log_text.insert('end', f"Extracting {file}...\n")
+                    
                     if os.path.exists(src):
                         if os.path.isdir(src):
                             shutil.copytree(src, dst, dirs_exist_ok=True)
@@ -194,94 +200,47 @@ class VintlyInstaller:
                             shutil.copy2(src, dst)
                     else:
                         raise FileNotFoundError(f"Required file not found: {file}")
-                    
-            except Exception as e:
-                self.log_error(f"Error extracting files: {str(e)}")
-                messagebox.showerror("Error", f"Failed to extract program files:\n{str(e)}")
-                self.install_button.config(state='normal')
-                return
-            
-            # Create .env file
-            self.update_status("Creating configuration file...", 40)
-            env_path = os.path.join(install_dir, '.env')
-            with open(env_path, 'w') as f:
-                f.write(f"GOOGLE_API_KEY={api_key}")
-            
-            # Create virtual environment with better error handling
-            self.update_status("Setting up Python environment...", 60)
-            venv_path = os.path.join(install_dir, '.venv')
-            
-            try:
-                # First, try using the venv module directly
-                import venv
-                venv.create(venv_path, with_pip=True)
-            except Exception as e:
-                # If that fails, try using the command line approach
-                try:
-                    subprocess.run([sys.executable, '-m', 'venv', venv_path], 
-                                 check=True, 
-                                 capture_output=True,
-                                 text=True)
-                except subprocess.CalledProcessError as e:
-                    error_msg = f"Failed to create virtual environment:\n{e.stdout}\n{e.stderr}"
-                    self.log_error(error_msg)
-                    messagebox.showerror("Error", error_msg)
-                    return
-            
-            # Install requirements with better error handling
-            self.update_status("Installing required packages...", 80)
-            if sys.platform == 'win32':
-                pip_cmd = os.path.join(venv_path, 'Scripts', 'pip.exe')
-            else:
-                pip_cmd = os.path.join(venv_path, 'bin', 'pip')
-            
-            try:
-                requirements_path = os.path.join(install_dir, 'requirements.txt')
-                result = subprocess.run([pip_cmd, 'install', '-r', requirements_path],
-                                     check=True,
-                                     capture_output=True,
-                                     text=True)
-                self.update_status(f"Successfully installed packages", 85)
-            except subprocess.CalledProcessError as e:
-                error_msg = f"Failed to install requirements:\n{e.stdout}\n{e.stderr}"
-                self.log_error(error_msg)
-                messagebox.showerror("Error", error_msg)
-                return
-            
-            # Create launcher script
-            self.update_status("Creating launcher...", 90)
-            launcher_path = os.path.join(install_dir, 'launch_vintly.py')
-            with open(launcher_path, 'w') as f:
-                f.write('''import os
+                
+                # Extract bundled Python
+                python_src = os.path.join(base_path, os.path.basename(sys.executable))
+                python_dst = os.path.join(install_dir, 'python', os.path.basename(sys.executable))
+                os.makedirs(os.path.dirname(python_dst), exist_ok=True)
+                shutil.copy2(python_src, python_dst)
+                
+                # Create .env file
+                self.update_status("Creating configuration file...", 40)
+                env_path = os.path.join(install_dir, '.env')
+                with open(env_path, 'w') as f:
+                    f.write(f"GOOGLE_API_KEY={api_key}")
+                
+                # Create launcher script
+                self.update_status("Creating launcher...", 90)
+                launcher_path = os.path.join(install_dir, 'launch_vintly.py')
+                with open(launcher_path, 'w') as f:
+                    f.write(f'''import os
 import subprocess
 import webbrowser
-import sys
 from pathlib import Path
 
 def main():
-    # Get the directory where the script is located
     script_dir = Path(__file__).parent.absolute()
+    python_exe = script_dir / 'python' / '{os.path.basename(sys.executable)}'
+    app_path = script_dir / 'app.py'
     
-    # Activate virtual environment
-    if sys.platform == 'win32':
-        python_path = script_dir / '.venv' / 'Scripts' / 'python.exe'
-    else:
-        python_path = script_dir / '.venv' / 'bin' / 'python'
-    
-    if not python_path.exists():
-        print("Error: Virtual environment not found!")
+    if not python_exe.exists():
+        print("Error: Python runtime not found!")
         return
     
-    # Run the Flask application
-    app_path = script_dir / 'app.py'
     if not app_path.exists():
         print("Error: Application not found!")
         return
     
     # Start the Flask application
-    subprocess.Popen([str(python_path), str(app_path)], 
-                    cwd=str(script_dir),
-                    creationflags=subprocess.CREATE_NEW_CONSOLE if sys.platform == 'win32' else 0)
+    process = subprocess.Popen(
+        [str(python_exe), str(app_path)],
+        cwd=str(script_dir),
+        creationflags=subprocess.CREATE_NEW_CONSOLE
+    )
     
     # Wait a moment for the server to start
     import time
@@ -293,36 +252,39 @@ def main():
 if __name__ == '__main__':
     main()
 ''')
-            
-            # Create desktop shortcut
-            self.update_status("Creating desktop shortcut...", 95)
-            desktop_path = os.path.join(os.path.expanduser("~"), "Desktop")
-            shortcut_path = os.path.join(desktop_path, "Vintly.lnk")
-            
-            # Create shortcut using PowerShell
-            ps_script = f'''
+                
+                # Create desktop shortcut
+                self.update_status("Creating desktop shortcut...", 95)
+                desktop_path = os.path.join(os.path.expanduser("~"), "Desktop")
+                shortcut_path = os.path.join(desktop_path, "Vintly.lnk")
+                
+                ps_script = f'''
 $WshShell = New-Object -comObject WScript.Shell
 $Shortcut = $WshShell.CreateShortcut("{shortcut_path}")
-$Shortcut.TargetPath = "pythonw"
+$Shortcut.TargetPath = "{python_dst}"
 $Shortcut.Arguments = "{launcher_path}"
 $Shortcut.WorkingDirectory = "{install_dir}"
 $Shortcut.IconLocation = "{os.path.join(install_dir, 'img', 'vintly-icon.ico')}"
 $Shortcut.Save()
 '''
-            subprocess.run(['powershell', '-Command', ps_script], check=True)
-            
-            self.update_status("Installation completed successfully!", 100)
-            messagebox.showinfo("Success", 
-                "Vintly has been installed successfully!\nYou can now launch it from the desktop shortcut.")
-            
-            # Close installer
-            self.root.quit()
+                subprocess.run(['powershell', '-Command', ps_script], check=True)
+                
+                self.update_status("Installation completed successfully!", 100)
+                messagebox.showinfo("Success", 
+                    "Vintly has been installed successfully!\nYou can now launch it from the desktop shortcut.")
+                
+                # Close installer
+                self.root.quit()
+                
+            except Exception as e:
+                self.log_error(f"Error during file extraction: {str(e)}")
+                raise
             
         except Exception as e:
             self.log_error(f"Installation failed: {str(e)}")
             messagebox.showerror("Error", f"An error occurred during installation:\n{str(e)}")
         finally:
-            # Re-enable the install button
+            self.is_installing = False
             self.install_button.config(state='normal')
     
     def run(self):

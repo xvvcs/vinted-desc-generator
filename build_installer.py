@@ -25,19 +25,31 @@ def build_installer():
 
 block_cipher = None
 
+# Include Python runtime and all required packages
+added_files = [
+    ('app.py', '.'),
+    ('requirements.txt', '.'),
+    ('templates', 'templates'),
+    ('img', 'img'),
+    ('config', 'config'),
+    ('templates.json', '.'),
+    ('{sys.executable}', '.'),  # Include Python interpreter
+]
+
 a = Analysis(
     ['installer.py'],
     pathex=[r'{current_dir_str}'],
     binaries=[],
-    datas=[
-        ('app.py', '.'),
-        ('requirements.txt', '.'),
-        ('templates', 'templates'),
-        ('img', 'img'),
-        ('config', 'config'),
-        ('templates.json', '.'),
+    datas=added_files,
+    hiddenimports=[
+        'tkinter',
+        'tkinter.ttk',
+        'flask',
+        'google.generativeai',
+        'PIL',
+        'requests',
+        'python-dotenv'
     ],
-    hiddenimports=['tkinter', 'tkinter.ttk'],
     hookspath=[],
     hooksconfig={{}},
     runtime_hooks=[],
@@ -46,7 +58,6 @@ a = Analysis(
     win_private_assemblies=False,
     cipher=block_cipher,
     noarchive=False,
-    collect_all=['tkinter']
 )
 
 pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
@@ -71,7 +82,8 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon='img/vintly-icon.ico'
+    icon='img/vintly-icon.ico',
+    onefile=True  # Create a single file
 )
 '''
     
@@ -88,6 +100,7 @@ exe = EXE(
         "PyInstaller",
         "--clean",
         "--noconfirm",
+        "--onefile",  # Create a single file
         str(spec_path)
     ], check=True)
     
