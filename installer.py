@@ -231,26 +231,15 @@ class VintlyInstaller:
                 with open(env_path, 'w') as f:
                     f.write(f"GOOGLE_API_KEY={api_key}")
                 
-                # Instead of creating a virtual environment, use the bundled Python
+                # Copy Python environment
                 self.update_status("Setting up Python environment...", 60)
                 python_dir = os.path.join(install_dir, 'python')
                 os.makedirs(python_dir, exist_ok=True)
                 
-                # Install packages using bundled pip
-                self.update_status("Installing required packages...", 80)
-                pip_exe = os.path.join(python_dir, 'Scripts', 'pip.exe')
-                requirements_path = os.path.join(install_dir, 'requirements.txt')
+                # No need to install packages as they're bundled
+                self.update_status("Configuring Python packages...", 80)
                 
-                try:
-                    subprocess.run([pip_exe, 'install', '-r', requirements_path], 
-                                 check=True,
-                                 capture_output=True,
-                                 text=True)
-                except subprocess.CalledProcessError as e:
-                    self.log_error(f"Failed to install requirements: {e.stdout}\n{e.stderr}")
-                    raise
-                
-                # Update launcher script to use bundled Python
+                # Create launcher script
                 self.update_status("Creating launcher...", 90)
                 launcher_path = os.path.join(install_dir, 'launch_vintly.py')
                 with open(launcher_path, 'w') as f:
@@ -272,10 +261,15 @@ def main():
         print("Error: Application not found!")
         return
     
+    # Set PYTHONPATH to include our bundled packages
+    env = os.environ.copy()
+    env['PYTHONPATH'] = str(script_dir / 'python' / 'Lib' / 'site-packages')
+    
     # Start the Flask application
     process = subprocess.Popen(
         [str(python_exe), str(app_path)],
         cwd=str(script_dir),
+        env=env,
         creationflags=subprocess.CREATE_NEW_CONSOLE
     )
     

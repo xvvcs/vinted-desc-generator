@@ -14,11 +14,15 @@ def build_installer():
         print("Installing PyInstaller...")
         subprocess.run([sys.executable, "-m", "pip", "install", "pyinstaller"], check=True)
     
-    # Get the current directory and Python executable path with proper escaping
+    # Get the current directory and Python paths
     current_dir = Path(__file__).parent.absolute()
     current_dir_str = str(current_dir).replace('\\', '/')
-    python_exe = str(Path(sys.executable)).replace('\\', '/')
-    python_dir = str(Path(sys.executable).parent).replace('\\', '/')
+    python_dir = Path(sys.executable).parent
+    
+    # Get all required Python DLLs
+    python_dlls = []
+    for file in python_dir.glob('python*.dll'):
+        python_dlls.append((str(file), f'python/{file.name}'))
     
     # Create the spec file
     spec_content = f'''
@@ -28,7 +32,7 @@ import sys
 
 block_cipher = None
 
-# Include Python runtime and all required packages
+# Include all necessary files
 added_files = [
     ('app.py', '.'),
     ('requirements.txt', '.'),
@@ -36,11 +40,22 @@ added_files = [
     ('img', 'img'),
     ('config', 'config'),
     ('templates.json', '.'),
-    (r'{python_exe}', 'python/python.exe'),
-    (os.path.join(r'{python_dir}', 'python3.dll'), 'python/python3.dll'),
-    (os.path.join(r'{python_dir}', 'python313.dll'), 'python/python313.dll'),
-    (os.path.join(r'{python_dir}', 'Scripts', 'pip.exe'), 'python/Scripts/pip.exe'),
+    (r'{str(sys.executable)}', 'python/python.exe'),
+    (r'{str(python_dir / "Scripts" / "pip.exe")}', 'python/Scripts/pip.exe'),
+    (r'{str(python_dir / "Scripts" / "pip3.exe")}', 'python/Scripts/pip3.exe'),
+] + {python_dlls}
+
+# Add site-packages
+site_packages = [
+    'flask',
+    'google_generativeai',
+    'PIL',
+    'requests',
+    'python-dotenv'
 ]
+
+for package in site_packages:
+    added_files.append((os.path.join(r'{python_dir}', 'Lib', 'site-packages', package), f'python/Lib/site-packages/{{package}}'))
 
 a = Analysis(
     ['installer.py'],
@@ -87,7 +102,7 @@ exe = EXE(
     upx=True,
     upx_exclude=[],
     runtime_tmpdir=None,
-    console=False,
+    console=True,  # Changed to True temporarily for debugging
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
