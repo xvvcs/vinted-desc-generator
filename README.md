@@ -38,8 +38,9 @@ A powerful tool that generates professional, multilingual descriptions for Vinte
 
 ### ⚡ Quick Windows Installation ⚡
 
-For Windows users, we've created a simplified installation process:
+For Windows users, I've created a simplified installation process:
 
+0. Make sure you have python 3.12.9 installed [Python's download link](https://www.python.org/downloads/release/python-3129/) (follow instructions and **add to env PATH**, or if you struggle go follow prerequisites in next section)
 1. Download and extract the ZIP file
 2. Double-click on `setup_windows.bat`
 3. Follow the prompts to install dependencies and enter your Google API key
