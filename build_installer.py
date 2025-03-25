@@ -18,10 +18,13 @@ def build_installer():
     current_dir = Path(__file__).parent.absolute()
     current_dir_str = str(current_dir).replace('\\', '/')
     python_exe = str(Path(sys.executable)).replace('\\', '/')
+    python_dir = str(Path(sys.executable).parent).replace('\\', '/')
     
     # Create the spec file
     spec_content = f'''
 # -*- mode: python ; coding: utf-8 -*-
+import os
+import sys
 
 block_cipher = None
 
@@ -33,10 +36,10 @@ added_files = [
     ('img', 'img'),
     ('config', 'config'),
     ('templates.json', '.'),
-    (sys.executable, 'python/python.exe'),
-    (os.path.join(os.path.dirname(sys.executable), 'python3.dll'), 'python/python3.dll'),
-    (os.path.join(os.path.dirname(sys.executable), 'python39.dll'), 'python/python39.dll'),
-    (os.path.join(os.path.dirname(sys.executable), 'Scripts', 'pip.exe'), 'python/Scripts/pip.exe'),
+    (r'{python_exe}', 'python/python.exe'),
+    (os.path.join(r'{python_dir}', 'python3.dll'), 'python/python3.dll'),
+    (os.path.join(r'{python_dir}', 'python313.dll'), 'python/python313.dll'),
+    (os.path.join(r'{python_dir}', 'Scripts', 'pip.exe'), 'python/Scripts/pip.exe'),
 ]
 
 a = Analysis(
@@ -51,7 +54,12 @@ a = Analysis(
         'google.generativeai',
         'PIL',
         'requests',
-        'python-dotenv'
+        'python-dotenv',
+        'webbrowser',
+        'pathlib',
+        'json',
+        'shutil',
+        'subprocess'
     ],
     hookspath=[],
     hooksconfig={{}},
