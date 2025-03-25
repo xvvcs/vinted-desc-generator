@@ -231,22 +231,26 @@ class VintlyInstaller:
                 with open(env_path, 'w') as f:
                     f.write(f"GOOGLE_API_KEY={api_key}")
                 
-                # Create virtual environment
+                # Instead of creating a virtual environment, use the bundled Python
                 self.update_status("Setting up Python environment...", 60)
-                venv_path = os.path.join(install_dir, '.venv')
-                subprocess.run([sys.executable, '-m', 'venv', venv_path], check=True)
+                python_dir = os.path.join(install_dir, 'python')
+                os.makedirs(python_dir, exist_ok=True)
                 
-                # Install requirements
+                # Install packages using bundled pip
                 self.update_status("Installing required packages...", 80)
-                if sys.platform == 'win32':
-                    pip_cmd = os.path.join(venv_path, 'Scripts', 'pip.exe')
-                else:
-                    pip_cmd = os.path.join(venv_path, 'bin', 'pip')
-                    
+                pip_exe = os.path.join(python_dir, 'Scripts', 'pip.exe')
                 requirements_path = os.path.join(install_dir, 'requirements.txt')
-                subprocess.run([pip_cmd, 'install', '-r', requirements_path], check=True)
                 
-                # Create launcher script
+                try:
+                    subprocess.run([pip_exe, 'install', '-r', requirements_path], 
+                                 check=True,
+                                 capture_output=True,
+                                 text=True)
+                except subprocess.CalledProcessError as e:
+                    self.log_error(f"Failed to install requirements: {e.stdout}\n{e.stderr}")
+                    raise
+                
+                # Update launcher script to use bundled Python
                 self.update_status("Creating launcher...", 90)
                 launcher_path = os.path.join(install_dir, 'launch_vintly.py')
                 with open(launcher_path, 'w') as f:
@@ -257,11 +261,11 @@ from pathlib import Path
 
 def main():
     script_dir = Path(__file__).parent.absolute()
-    venv_python = script_dir / '.venv' / 'Scripts' / 'python.exe'
+    python_exe = script_dir / 'python' / 'python.exe'
     app_path = script_dir / 'app.py'
     
-    if not venv_python.exists():
-        print("Error: Python environment not found!")
+    if not python_exe.exists():
+        print("Error: Python runtime not found!")
         return
     
     if not app_path.exists():
@@ -270,7 +274,7 @@ def main():
     
     # Start the Flask application
     process = subprocess.Popen(
-        [str(venv_python), str(app_path)],
+        [str(python_exe), str(app_path)],
         cwd=str(script_dir),
         creationflags=subprocess.CREATE_NEW_CONSOLE
     )

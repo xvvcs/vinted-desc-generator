@@ -33,7 +33,10 @@ added_files = [
     ('img', 'img'),
     ('config', 'config'),
     ('templates.json', '.'),
-    (r'{python_exe}', '.'),  # Include Python interpreter
+    (sys.executable, 'python/python.exe'),
+    (os.path.join(os.path.dirname(sys.executable), 'python3.dll'), 'python/python3.dll'),
+    (os.path.join(os.path.dirname(sys.executable), 'python39.dll'), 'python/python39.dll'),
+    (os.path.join(os.path.dirname(sys.executable), 'Scripts', 'pip.exe'), 'python/Scripts/pip.exe'),
 ]
 
 a = Analysis(
