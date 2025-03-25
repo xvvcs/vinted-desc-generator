@@ -86,6 +86,10 @@ Before you start, make sure you have these installed on your computer:
      ```bash
      python -m venv .venv
      ```
+   - Make sure you make running the shell scripts available
+     ```bash
+     Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+     ```
    - Activate the virtual environment:
      - On Mac/Linux:
        ```bash
