@@ -38,7 +38,17 @@ A powerful tool that generates professional, multilingual descriptions for Vinte
 
 ## Installation
 
-### Prerequisites
+### Quick Install (Recommended for Windows Users)
+
+1. Download the latest `Vintly_Installer.exe` from the [Releases](https://github.com/xvvcs/vinted-desc-generator/releases) page
+2. Run the installer
+3. Choose your installation directory (default is `C:\Users\YourUsername\Vintly`)
+4. Enter your Google API key when prompted
+5. Wait for the installation to complete
+6. A desktop shortcut will be created automatically
+7. Double-click the Vintly shortcut to start the application
+
+### Manual Installation (For Developers or Non-Windows Users)
 
 Before you start, make sure you have these installed on your computer:
 
