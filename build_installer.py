@@ -67,7 +67,7 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon='img/vintly-logo.ico'
+    icon='img/vintly-icon.ico'
 )
 '''
     
