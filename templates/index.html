@@ -18,27 +18,27 @@
     />
     <style>
       :root {
-        --primary-color: #4f46e5;
-        --primary-hover: #4338ca;
-        --secondary-color: #64748b;
+        --primary-color: #2e236c;
+        --primary-hover: #17153b;
+        --secondary-color: #433d8b;
         --background-color: #f8fafc;
         --card-background: #ffffff;
-        --border-color: #e2e8f0;
-        --text-primary: #1e293b;
-        --text-secondary: #64748b;
-        --shadow-color: rgba(0, 0, 0, 0.1);
+        --border-color: #c8acd6;
+        --text-primary: #17153b;
+        --text-secondary: #433d8b;
+        --shadow-color: rgba(23, 21, 59, 0.1);
       }
 
       [data-theme="dark"] {
-        --primary-color: #6366f1;
-        --primary-hover: #4f46e5;
-        --secondary-color: #94a3b8;
-        --background-color: #0f172a;
-        --card-background: #1e293b;
-        --border-color: #334155;
+        --primary-color: #433d8b;
+        --primary-hover: #2e236c;
+        --secondary-color: #c8acd6;
+        --background-color: #17153b;
+        --card-background: #2e236c;
+        --border-color: #433d8b;
         --text-primary: #f1f5f9;
-        --text-secondary: #cbd5e1;
-        --shadow-color: rgba(0, 0, 0, 0.3);
+        --text-secondary: #c8acd6;
+        --shadow-color: rgba(200, 172, 214, 0.2);
       }
 
       body {
@@ -118,13 +118,14 @@
         padding: 0.5rem 1rem;
         border-radius: 8px;
         box-shadow: 0 2px 4px var(--shadow-color);
-        transition: all 0.2s ease;
+        transition: all 0.3s ease;
       }
 
       .settings-toggle:hover {
         background-color: var(--primary-color);
         color: white;
         border-color: var(--primary-color);
+        transform: translateY(-2px);
       }
 
       .theme-toggle {
@@ -142,12 +143,12 @@
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        transition: all 0.2s ease;
-        box-shadow: 0 2px 4px var(--shadow-color);
+        transition: all 0.3s ease;
+        box-shadow: 0 3px 8px var(--shadow-color);
       }
 
       .theme-toggle:hover {
-        transform: scale(1.1);
+        transform: scale(1.1) rotate(15deg);
       }
 
       .theme-toggle i {
@@ -174,7 +175,7 @@
       .form-select:focus {
         background-color: var(--card-background);
         border-color: var(--primary-color);
-        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        box-shadow: 0 0 0 3px rgba(67, 61, 139, 0.2);
         color: var(--text-primary);
       }
 
@@ -190,18 +191,58 @@
       }
 
       .btn-primary {
-        background-color: var(--primary-color);
-        border-color: var(--primary-color);
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+        border: none;
         padding: 0.75rem 1.5rem;
         font-weight: 500;
         border-radius: 8px;
-        transition: all 0.2s ease;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 6px rgba(46, 35, 108, 0.2);
+        position: relative;
+        overflow: hidden;
       }
 
       .btn-primary:hover {
-        background-color: var(--primary-hover);
-        border-color: var(--primary-hover);
-        transform: translateY(-1px);
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 6px 12px rgba(46, 35, 108, 0.3);
+      }
+
+      .btn-primary:active {
+        transform: translateY(1px);
+        box-shadow: 0 2px 4px rgba(46, 35, 108, 0.2);
+      }
+
+      .btn-primary::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 5px;
+        height: 5px;
+        background: rgba(255, 255, 255, 0.5);
+        opacity: 0;
+        border-radius: 100%;
+        transform: scale(1, 1) translate(-50%);
+        transform-origin: 50% 50%;
+      }
+
+      .btn-primary:focus:not(:active)::after {
+        animation: ripple 1s ease-out;
+      }
+
+      @keyframes ripple {
+        0% {
+          transform: scale(0, 0);
+          opacity: 0.5;
+        }
+        100% {
+          transform: scale(20, 20);
+          opacity: 0;
+        }
       }
 
       .btn-secondary {
@@ -210,28 +251,53 @@
         padding: 0.75rem 1.5rem;
         font-weight: 500;
         border-radius: 8px;
-        transition: all 0.2s ease;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
       }
 
       .btn-secondary:hover {
         opacity: 0.9;
-        transform: translateY(-1px);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px var(--shadow-color);
+      }
+
+      .btn-secondary::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 5px;
+        height: 5px;
+        background: rgba(255, 255, 255, 0.3);
+        opacity: 0;
+        border-radius: 100%;
+        transform: scale(1, 1) translate(-50%);
+        transform-origin: 50% 50%;
+      }
+
+      .btn-secondary:focus:not(:active)::after {
+        animation: ripple 1s ease-out;
       }
 
       .card {
         background-color: var(--card-background);
         border: none;
         border-radius: 12px;
-        box-shadow: 0 4px 6px var(--shadow-color);
-        transition: transform 0.2s ease;
+        box-shadow: 0 4px 10px var(--shadow-color);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        margin-bottom: 1.5rem;
+        overflow: hidden;
       }
 
       .card:hover {
-        transform: translateY(-2px);
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px var(--shadow-color);
       }
 
       .card-body {
-        padding: 1.5rem;
+        padding: 1.8rem;
+        position: relative;
       }
 
       .card-text {
@@ -254,7 +320,8 @@
       .upload-area:hover,
       .upload-area.dragover {
         border-color: var(--primary-color);
-        background-color: rgba(99, 102, 241, 0.05);
+        background-color: rgba(67, 61, 139, 0.05);
+        transform: translateY(-2px);
       }
 
       .upload-area input[type="file"] {
@@ -314,11 +381,11 @@
         justify-content: center;
         cursor: pointer;
         font-size: 0.75rem;
-        transition: all 0.2s ease;
+        transition: all 0.3s ease;
       }
 
       .remove-image:hover {
-        transform: scale(1.1);
+        transform: scale(1.2);
         background-color: #dc2626;
       }
 
@@ -331,12 +398,35 @@
         font-weight: 700;
         color: var(--text-primary);
         margin-bottom: 2rem;
+        position: relative;
+      }
+
+      h1:after {
+        content: "";
+        position: absolute;
+        bottom: -8px;
+        left: 0;
+        width: 60px;
+        height: 3px;
+        background-color: var(--primary-color);
       }
 
       h3 {
         font-weight: 600;
         color: var(--text-primary);
         margin-bottom: 1rem;
+        position: relative;
+        display: inline-block;
+      }
+
+      h3:after {
+        content: "";
+        position: absolute;
+        bottom: -4px;
+        left: 0;
+        width: 40px;
+        height: 2px;
+        background-color: var(--primary-color);
       }
 
       /* Toast Notification */
@@ -344,14 +434,18 @@
         position: fixed;
         bottom: 20px;
         right: 20px;
-        background-color: var(--card-background);
-        color: var(--text-primary);
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+        color: white;
         padding: 1rem 2rem;
         border-radius: 8px;
-        box-shadow: 0 4px 6px var(--shadow-color);
+        box-shadow: 0 4px 10px var(--shadow-color);
         transform: translateY(100px);
         opacity: 0;
-        transition: all 0.3s ease;
+        transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
         z-index: 1000;
       }
 
@@ -385,6 +479,115 @@
         to {
           transform: rotate(360deg);
         }
+      }
+
+      /* Enhanced description result area */
+      #result {
+        position: relative;
+      }
+
+      #result.show {
+        animation: slideDown 0.5s ease forwards;
+      }
+
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      #description {
+        position: relative;
+        transition: all 0.3s ease;
+        border-left: 3px solid var(--primary-color);
+        padding-left: 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      #description::before {
+        content: "";
+        position: absolute;
+        left: -20px;
+        top: -10px;
+        font-size: 3rem;
+        color: var(--border-color);
+        opacity: 0.5;
+      }
+
+      .copy-btn-wrapper {
+        text-align: left;
+      }
+
+      .btn-copy {
+        background: linear-gradient(
+          135deg,
+          var(--secondary-color),
+          var(--primary-color)
+        );
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 6px var(--shadow-color);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .btn-copy:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 10px var(--shadow-color);
+      }
+
+      .btn-copy i {
+        transition: transform 0.3s ease;
+      }
+
+      .btn-copy:hover i {
+        transform: translateY(-3px);
+      }
+
+      .btn-copy::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 5px;
+        height: 5px;
+        background: rgba(255, 255, 255, 0.3);
+        opacity: 0;
+        border-radius: 100%;
+        transform: scale(1, 1) translate(-50%);
+        transform-origin: 50% 50%;
+      }
+
+      .btn-copy:focus:not(:active)::after {
+        animation: ripple 1s ease-out;
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      .copy-success {
+        animation: pulse 0.5s ease;
       }
     </style>
   </head>
@@ -521,10 +724,12 @@
         <h3>Generated Description</h3>
         <div class="card">
           <div class="card-body">
-            <p id="description" class="card-text"></p>
-            <button class="btn btn-secondary" onclick="copyToClipboard()">
-              Copy to Clipboard
-            </button>
+            <div id="description" class="card-text"></div>
+            <div class="copy-btn-wrapper">
+              <button class="btn-copy" onclick="copyToClipboard()">
+                <i class="fas fa-clipboard"></i> Copy to Clipboard
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -745,6 +950,12 @@
           if (response.ok) {
             description.textContent = data.description;
             result.style.display = "block";
+
+            // Add animation class after a brief delay
+            setTimeout(() => {
+              result.classList.add("show");
+            }, 50);
+
             showToast("Description generated successfully!");
           } else {
             showToast(data.error || "Error generating description");
@@ -761,9 +972,51 @@
       });
 
       function copyToClipboard() {
+        const copyBtn = document.querySelector(".btn-copy");
+        const originalText = copyBtn.innerHTML;
+        const textToCopy = description.textContent || description.innerText;
+
+        // Fallback method for browsers with limited clipboard support
+        if (!navigator.clipboard) {
+          const textArea = document.createElement("textarea");
+          textArea.value = textToCopy;
+          textArea.style.position = "fixed"; // Avoid scrolling to bottom
+          document.body.appendChild(textArea);
+          textArea.focus();
+          textArea.select();
+
+          try {
+            const successful = document.execCommand("copy");
+            copyBtn.classList.add("copy-success");
+            copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+
+            setTimeout(() => {
+              copyBtn.classList.remove("copy-success");
+              copyBtn.innerHTML = originalText;
+            }, 2000);
+
+            showToast("Description copied to clipboard!");
+          } catch (err) {
+            console.error("Fallback: Clipboard copy failed", err);
+            showToast("Failed to copy to clipboard");
+          }
+
+          document.body.removeChild(textArea);
+          return;
+        }
+
+        // Modern clipboard API method
         navigator.clipboard
-          .writeText(description.textContent)
+          .writeText(textToCopy)
           .then(() => {
+            copyBtn.classList.add("copy-success");
+            copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+
+            setTimeout(() => {
+              copyBtn.classList.remove("copy-success");
+              copyBtn.innerHTML = originalText;
+            }, 2000);
+
             showToast("Description copied to clipboard!");
           })
           .catch((err) => {

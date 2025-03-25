@@ -9,8 +9,8 @@ from PIL import Image
 import io
 import base64
 
-# Load environment variables
-load_dotenv()
+# Load environment variables with override to handle pre-existing values
+load_dotenv(override=True)
 
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
@@ -21,10 +21,10 @@ app.config['TEMPLATES_FILE'] = 'templates.json'
 # Ensure upload folder exists
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
-# Initialize Gemini API
+# Initialize Gemini API with the key from .env
 api_key = os.getenv('GOOGLE_API_KEY')
 if not api_key:
-    raise ValueError("GOOGLE_API_KEY environment variable is not set. Please check your .env file.")
+    raise ValueError("GOOGLE_API_KEY environment variable is not set")
 
 genai.configure(api_key=api_key)
 model = genai.GenerativeModel('gemini-1.5-flash')
@@ -189,4 +189,4 @@ def generate():
     return jsonify({'description': description})
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5001, debug=True) 
+    app.run(host='0.0.0.0', port=5001, debug=True)
