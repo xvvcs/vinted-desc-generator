@@ -179,7 +179,14 @@ class VintlyInstaller:
                 return
             
             # Get the base path for embedded files
-            base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
+            if getattr(sys, 'frozen', False):
+                # Running as compiled executable
+                base_path = sys._MEIPASS
+            else:
+                # Running as script
+                base_path = os.path.dirname(os.path.abspath(__file__))
+            
+            self.log_text.insert('end', f"Base path: {base_path}\n")
             
             # Create installation directory
             os.makedirs(install_dir, exist_ok=True)
@@ -188,24 +195,35 @@ class VintlyInstaller:
             # Extract embedded files
             self.update_status("Extracting program files...", 20)
             try:
-                for file in ['app.py', 'requirements.txt', 'templates', 'img', 'config', 'templates.json']:
+                files_to_copy = {
+                    'app.py': 'file',
+                    'requirements.txt': 'file',
+                    'templates': 'dir',
+                    'img': 'dir',
+                    'config': 'dir',
+                    'templates.json': 'file'
+                }
+                
+                for file, file_type in files_to_copy.items():
                     src = os.path.join(base_path, file)
                     dst = os.path.join(install_dir, file)
-                    self.log_text.insert('end', f"Extracting {file}...\n")
+                    self.log_text.insert('end', f"Copying from {src} to {dst}\n")
                     
-                    if os.path.exists(src):
-                        if os.path.isdir(src):
-                            shutil.copytree(src, dst, dirs_exist_ok=True)
+                    try:
+                        if file_type == 'dir':
+                            if os.path.exists(dst):
+                                shutil.rmtree(dst)
+                            shutil.copytree(src, dst)
                         else:
                             shutil.copy2(src, dst)
-                    else:
-                        raise FileNotFoundError(f"Required file not found: {file}")
-                
-                # Extract bundled Python
-                python_src = os.path.join(base_path, os.path.basename(sys.executable))
-                python_dst = os.path.join(install_dir, 'python', os.path.basename(sys.executable))
-                os.makedirs(os.path.dirname(python_dst), exist_ok=True)
-                shutil.copy2(python_src, python_dst)
+                        self.log_text.insert('end', f"Successfully copied {file}\n")
+                    except FileNotFoundError:
+                        self.log_text.insert('end', f"Warning: Could not find {file}\n")
+                        # Continue with installation even if some files are missing
+                        continue
+                    except Exception as e:
+                        self.log_text.insert('end', f"Error copying {file}: {str(e)}\n")
+                        raise
                 
                 # Create .env file
                 self.update_status("Creating configuration file...", 40)
@@ -213,22 +231,37 @@ class VintlyInstaller:
                 with open(env_path, 'w') as f:
                     f.write(f"GOOGLE_API_KEY={api_key}")
                 
+                # Create virtual environment
+                self.update_status("Setting up Python environment...", 60)
+                venv_path = os.path.join(install_dir, '.venv')
+                subprocess.run([sys.executable, '-m', 'venv', venv_path], check=True)
+                
+                # Install requirements
+                self.update_status("Installing required packages...", 80)
+                if sys.platform == 'win32':
+                    pip_cmd = os.path.join(venv_path, 'Scripts', 'pip.exe')
+                else:
+                    pip_cmd = os.path.join(venv_path, 'bin', 'pip')
+                    
+                requirements_path = os.path.join(install_dir, 'requirements.txt')
+                subprocess.run([pip_cmd, 'install', '-r', requirements_path], check=True)
+                
                 # Create launcher script
                 self.update_status("Creating launcher...", 90)
                 launcher_path = os.path.join(install_dir, 'launch_vintly.py')
                 with open(launcher_path, 'w') as f:
-                    f.write(f'''import os
+                    f.write('''import os
 import subprocess
 import webbrowser
 from pathlib import Path
 
 def main():
     script_dir = Path(__file__).parent.absolute()
-    python_exe = script_dir / 'python' / '{os.path.basename(sys.executable)}'
+    venv_python = script_dir / '.venv' / 'Scripts' / 'python.exe'
     app_path = script_dir / 'app.py'
     
-    if not python_exe.exists():
-        print("Error: Python runtime not found!")
+    if not venv_python.exists():
+        print("Error: Python environment not found!")
         return
     
     if not app_path.exists():
@@ -237,7 +270,7 @@ def main():
     
     # Start the Flask application
     process = subprocess.Popen(
-        [str(python_exe), str(app_path)],
+        [str(venv_python), str(app_path)],
         cwd=str(script_dir),
         creationflags=subprocess.CREATE_NEW_CONSOLE
     )
@@ -261,7 +294,7 @@ if __name__ == '__main__':
                 ps_script = f'''
 $WshShell = New-Object -comObject WScript.Shell
 $Shortcut = $WshShell.CreateShortcut("{shortcut_path}")
-$Shortcut.TargetPath = "{python_dst}"
+$Shortcut.TargetPath = "pythonw"
 $Shortcut.Arguments = "{launcher_path}"
 $Shortcut.WorkingDirectory = "{install_dir}"
 $Shortcut.IconLocation = "{os.path.join(install_dir, 'img', 'vintly-icon.ico')}"
