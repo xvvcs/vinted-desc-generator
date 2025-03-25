@@ -40,47 +40,115 @@ A powerful tool that generates professional, multilingual descriptions for Vinte
 
 ### Prerequisites
 
-- Python 3.8 or higher
-- pip (Python package installer)
-- Google API key for Gemini AI
+Before you start, make sure you have these installed on your computer:
 
-### Steps
+1. **Python 3.8 or higher**
 
-1. Clone the repository:
+   - Download from [Python's official website](https://www.python.org/downloads/)
+   - During installation, make sure to check "Add Python to PATH"
+   - To verify installation, open Terminal (Mac/Linux) or Command Prompt (Windows) and type:
+     ```bash
+     python --version
+     ```
+   - You should see something like "Python 3.8.x"
 
-```bash
-git clone https://github.com/xvvcs/vinted-desc-generator.git
-cd vinted-desc-generator
-```
+2. **pip (Python package installer)**
 
-2. Create and activate a virtual environment (recommended):
+   - Usually comes with Python installation
+   - To verify installation, type:
+     ```bash
+     pip --version
+     ```
 
-```bash
-python -m venv .venv
-source .venv/bin/activate  # On Windows, use: .venv\Scripts\activate
-```
+3. **Google API key for Gemini AI**
+   - Go to [Google AI Studio](https://makersuite.google.com/app/apikey)
+   - Sign in with your Google account
+   - Click "Create API Key"
+   - Copy your API key (you'll need it later)
 
-3. Install required packages:
+### Step-by-Step Installation
 
-```bash
-pip install -r requirements.txt
-```
+1. **Download the Program**
 
-4. Create a `.env` file in the project root and add your Google API key:
+   - Click the green "Code" button on this page
+   - Select "Download ZIP"
+   - Extract the ZIP file to a folder on your computer
+   - Open Terminal (Mac/Linux) or Command Prompt (Windows)
+   - Navigate to the extracted folder:
+     ```bash
+     cd path/to/vinted-desc-generator
+     ```
+   - Replace "path/to" with the actual path where you extracted the files
 
-```
-GOOGLE_API_KEY=your_api_key_here
-```
-*Remember to not share it with outsiders!*
+2. **Set Up Python Environment**
 
-5. Run the application:
+   - Create a virtual environment (this keeps the program's files separate from other Python programs):
+     ```bash
+     python -m venv .venv
+     ```
+   - Activate the virtual environment:
+     - On Mac/Linux:
+       ```bash
+       source .venv/bin/activate
+       ```
+     - On Windows:
+       ```bash
+       .venv\Scripts\activate
+       ```
+   - You'll know it's activated when you see `(.venv)` at the start of your command line
 
-```bash
-python app.py
-```
+3. **Install Required Packages**
 
-The application will be available at `http://localhost:5000`.
-You can also check the ip address while Flask serving, in cmd 
+   - With the virtual environment activated, run:
+     ```bash
+     pip install -r requirements.txt
+     ```
+   - Wait for all packages to install (this might take a few minutes)
+
+4. **Set Up API Key**
+
+   - In the program folder, create a new file named `.env`
+   - Open it with any text editor (like Notepad or TextEdit)
+   - Add this line, replacing `your_api_key_here` with your actual Google API key:
+     ```
+     GOOGLE_API_KEY=your_api_key_here
+     ```
+   - Save the file
+   - ⚠️ Important: Never share your API key with anyone!
+
+5. **Run the Program**
+   - Make sure your virtual environment is activated (you should see `(.venv)` in your terminal)
+   - Run the program:
+     ```bash
+     python app.py
+     ```
+   - You should see a message that the server is running
+   - Open your web browser and go to: `http://localhost:5000`
+
+### Troubleshooting
+
+If you encounter any issues:
+
+1. **"Python is not recognized" error**
+
+   - Make sure Python is added to your PATH during installation
+   - Try reinstalling Python and check "Add Python to PATH"
+
+2. **"pip is not recognized" error**
+
+   - Try using `python -m pip` instead of just `pip`
+
+3. **"Module not found" errors**
+
+   - Make sure you're in the virtual environment (you should see `(.venv)`)
+   - Try running `pip install -r requirements.txt` again
+
+4. **Program won't start**
+   - Check if you're in the correct directory
+   - Make sure the `.env` file is created with your API key
+   - Try closing and reopening your terminal
+
+Need help? Feel free to open an issue on GitHub or contact the developer!
 
 ## Usage
 
