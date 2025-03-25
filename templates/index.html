@@ -51,24 +51,188 @@
 
       .navbar {
         background-color: var(--card-background) !important;
-        box-shadow: 0 1px 3px var(--shadow-color);
-        padding: 1rem 0;
+        box-shadow: 0 2px 10px var(--shadow-color);
+        padding: 0.75rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        transition: all 0.3s ease;
+        margin-bottom: 1.5rem; /* Add space below navbar */
+      }
+
+      .navbar:after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(
+          90deg,
+          var(--primary-color),
+          var(--secondary-color),
+          var(--border-color)
+        );
+        opacity: 0.8;
+      }
+
+      .navbar-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
       }
 
       .navbar-brand {
-        font-weight: 700;
-        color: var(--primary-color) !important;
-        font-size: 1.5rem;
+        font-weight: 800;
+        font-size: 1.75rem;
+        position: relative;
+        padding: 0.5rem 0;
+        margin-right: 2rem;
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        letter-spacing: -0.5px;
+        transition: transform 0.3s ease;
+      }
+
+      .navbar-brand:hover {
+        transform: scale(1.05);
+      }
+
+      .navbar-brand::before {
+        content: "✨";
+        position: absolute;
+        left: -1.5rem;
+        top: 0.5rem;
+        font-size: 1rem;
+        opacity: 0;
+        transition: all 0.4s ease;
+        -webkit-text-fill-color: var(--primary-color);
+      }
+
+      .navbar-brand::after {
+        content: "✨";
+        position: absolute;
+        right: -1.5rem;
+        bottom: 0.5rem;
+        font-size: 1rem;
+        opacity: 0;
+        transition: all 0.4s ease;
+        -webkit-text-fill-color: var(--primary-color);
+      }
+
+      .navbar-brand:hover::before,
+      .navbar-brand:hover::after {
+        opacity: 1;
+        transform: translateY(-3px) rotate(20deg);
+      }
+
+      .nav-menu {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
       }
 
       .nav-link {
         color: var(--text-secondary) !important;
-        font-weight: 500;
-        transition: color 0.2s ease;
+        font-weight: 600;
+        padding: 0.75rem 1.25rem;
+        border-radius: 8px;
+        position: relative;
+        transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        z-index: 1;
       }
 
       .nav-link:hover {
         color: var(--primary-color) !important;
+        transform: translateY(-2px);
+      }
+
+      .nav-link::after {
+        content: "";
+        position: absolute;
+        bottom: 5px;
+        left: 50%;
+        width: 0;
+        height: 3px;
+        background: linear-gradient(
+          90deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+        transition: all 0.3s ease;
+        transform: translateX(-50%);
+        border-radius: 3px;
+        opacity: 0;
+      }
+
+      .nav-link:hover::after {
+        width: 60%;
+        opacity: 1;
+      }
+
+      .nav-link.active {
+        color: var(--primary-color) !important;
+        background-color: rgba(67, 61, 139, 0.1);
+      }
+
+      .nav-link.active::after {
+        width: 60%;
+        opacity: 1;
+      }
+
+      /* Mobile menu animation */
+      .navbar-collapse {
+        transition: max-height 0.35s ease;
+        max-height: 1000px; /* Changed from 0 to allow links to show by default */
+        overflow: hidden;
+      }
+
+      @media (max-width: 768px) {
+        .navbar-collapse {
+          max-height: 0;
+        }
+
+        .navbar-collapse.show {
+          max-height: 300px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .navbar-container {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .nav-menu {
+          flex-direction: column;
+          width: 100%;
+          padding-top: 0.5rem;
+        }
+
+        .nav-link {
+          width: 100%;
+          text-align: center;
+        }
+
+        .navbar-toggler {
+          display: block;
+          border: none;
+          background: transparent;
+          cursor: pointer;
+          padding: 0.5rem;
+          color: var(--primary-color);
+          font-size: 1.5rem;
+          position: absolute;
+          right: 1rem;
+          top: 1rem;
+        }
       }
 
       .preview-image {
@@ -593,11 +757,16 @@
   </head>
   <body>
     <nav class="navbar navbar-expand-lg navbar-light">
-      <div class="container">
+      <div class="container navbar-container">
         <a class="navbar-brand" href="/">Vintly</a>
-        <div class="navbar-nav">
-          <a class="nav-link active" href="/">Home</a>
-          <a class="nav-link" href="/templates">Templates</a>
+        <button class="navbar-toggler" type="button" onclick="toggleNavbar()">
+          <i class="fas fa-bars"></i>
+        </button>
+        <div class="navbar-collapse" id="navbarMenu">
+          <div class="nav-menu">
+            <a class="nav-link active" href="/">Home</a>
+            <a class="nav-link" href="/templates">Templates</a>
+          </div>
         </div>
       </div>
     </nav>
@@ -1028,6 +1197,59 @@
       // Load theme and settings when page loads
       loadTheme();
       loadSettings();
+
+      // Add these functions to your existing script section
+
+      // Toggle navbar for mobile
+      function toggleNavbar() {
+        const navbarMenu = document.getElementById("navbarMenu");
+        navbarMenu.classList.toggle("show");
+      }
+
+      // Add scroll effect to navbar
+      window.addEventListener("scroll", function () {
+        const navbar = document.querySelector(".navbar");
+        if (window.scrollY > 50) {
+          navbar.style.padding = "0.5rem 0";
+          navbar.style.boxShadow = "0 4px 20px var(--shadow-color)";
+        } else {
+          navbar.style.padding = "0.75rem 0";
+          navbar.style.boxShadow = "0 2px 10px var(--shadow-color)";
+        }
+      });
+
+      // Set active nav link based on current page
+      function setActiveNavLink() {
+        const currentPath = window.location.pathname;
+        const navLinks = document.querySelectorAll(".nav-link");
+
+        navLinks.forEach((link) => {
+          // Remove active class from all links
+          link.classList.remove("active");
+
+          // Get the path from href attribute
+          const linkPath = link.getAttribute("href");
+
+          // Check if this link corresponds to current page
+          if (linkPath === currentPath) {
+            link.classList.add("active");
+          }
+
+          // Special case for home page
+          if (currentPath === "/" && linkPath === "/") {
+            link.classList.add("active");
+          }
+        });
+      }
+
+      // Simple help modal function (if you want to implement it)
+      function showHelp() {
+        alert("Help information for Vintly - Coming Soon!");
+        // You could implement a proper modal similar to the one in templates.html
+      }
+
+      // Call this function when page loads
+      document.addEventListener("DOMContentLoaded", setActiveNavLink);
     </script>
   </body>
 </html>
