@@ -14,10 +14,10 @@ def build_installer():
         print("Installing PyInstaller...")
         subprocess.run([sys.executable, "-m", "pip", "install", "pyinstaller"], check=True)
     
-    # Get the current directory
+    # Get the current directory and Python executable path with proper escaping
     current_dir = Path(__file__).parent.absolute()
-    # Convert to string with forward slashes for the spec file
     current_dir_str = str(current_dir).replace('\\', '/')
+    python_exe = str(Path(sys.executable)).replace('\\', '/')
     
     # Create the spec file
     spec_content = f'''
@@ -33,7 +33,7 @@ added_files = [
     ('img', 'img'),
     ('config', 'config'),
     ('templates.json', '.'),
-    ('{sys.executable}', '.'),  # Include Python interpreter
+    (r'{python_exe}', '.'),  # Include Python interpreter
 ]
 
 a = Analysis(
@@ -83,7 +83,7 @@ exe = EXE(
     codesign_identity=None,
     entitlements_file=None,
     icon='img/vintly-icon.ico',
-    onefile=True  # This setting in the spec file controls single-file output
+    onefile=True
 )
 '''
     
@@ -101,7 +101,7 @@ exe = EXE(
         "--clean",
         "--noconfirm",
         str(spec_path)
-    ], check=True)  # Removed the --onefile flag since it's in the spec file
+    ], check=True)
     
     # Clean up
     spec_path.unlink()
