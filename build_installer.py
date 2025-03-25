@@ -2,6 +2,9 @@ import os
 import subprocess
 import sys
 from pathlib import Path
+import tkinter as tk
+from tkinter import ttk  # Add this import for the progress bar
+from tkinter import filedialog, messagebox
 
 def build_installer():
     # Install PyInstaller if not already installed
