@@ -523,11 +523,14 @@
         border-radius: 12px;
         box-shadow: 0 2px 4px var(--shadow-color);
         margin-top: 1rem;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       }
 
       .image-preview-container {
         position: relative;
         display: inline-block;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        transform-origin: center;
       }
 
       .remove-image {
@@ -753,6 +756,143 @@
       .copy-success {
         animation: pulse 0.5s ease;
       }
+
+      /* Add this to your existing CSS styles */
+      .mode-toggle-container {
+        margin-bottom: 1.5rem;
+      }
+
+      .mode-toggle-container .btn-group {
+        width: 100%;
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      .mode-toggle-container .btn {
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        text-align: center;
+        width: 50%;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .mode-toggle-container .btn small {
+        font-size: 0.75rem;
+        opacity: 0.8;
+        margin-top: 0.25rem;
+      }
+
+      .mode-toggle-container .btn-outline-primary {
+        background-color: var(--card-background);
+        color: var(--text-primary);
+        border-color: var(--border-color);
+      }
+
+      .mode-toggle-container .btn-check:checked + .btn-outline-primary {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--secondary-color)
+        );
+        color: white;
+        border-color: var(--primary-color);
+        animation: buttonSelected 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+      }
+
+      .image-preview-container.single-item {
+        padding: 8px;
+        border: 2px solid var(--primary-color);
+        border-radius: 12px;
+        position: relative;
+        animation: singleItemAppear 0.4s forwards;
+      }
+
+      .image-preview-container.single-item::before {
+        content: "Item";
+        position: absolute;
+        top: -10px;
+        left: 10px;
+        background: var(--card-background);
+        padding: 0 8px;
+        font-size: 0.75rem;
+        color: var(--primary-color);
+        font-weight: 500;
+      }
+
+      .item-description {
+        padding-bottom: 1.5rem;
+        position: relative;
+        border-left: 3px solid var(--primary-color);
+        padding-left: 1rem;
+        margin-bottom: 2rem;
+      }
+
+      .btn-copy-item {
+        margin-top: 0.5rem;
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+      }
+
+      .copy-all-wrapper {
+        margin-top: 1.5rem;
+        text-align: center;
+        border-top: 1px solid var(--border-color);
+        padding-top: 1.5rem;
+      }
+
+      .btn-copy-all {
+        background: linear-gradient(
+          135deg,
+          var(--secondary-color),
+          var(--primary-color)
+        );
+        font-size: 1rem;
+        padding: 0.75rem 1.5rem;
+      }
+
+      .item-description {
+        padding-bottom: 1rem;
+      }
+
+      .item-title {
+        color: var(--primary-color);
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+      }
+
+      #imagePreview.single-mode {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 1.5rem;
+      }
+
+      @keyframes singleItemAppear {
+        0% {
+          transform: scale(0.9);
+          border-color: transparent;
+        }
+        50% {
+          transform: scale(1.05);
+        }
+        100% {
+          transform: scale(1);
+          border-color: var(--primary-color);
+        }
+      }
+
+      @keyframes buttonSelected {
+        0% {
+          transform: scale(1);
+        }
+        40% {
+          transform: scale(1.08);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
     </style>
   </head>
   <body>
@@ -836,6 +976,41 @@
           <div id="imagePreview" class="mt-3"></div>
         </div>
 
+        <!-- Add the mode toggle switch here -->
+        <div class="mode-toggle-container mt-3 mb-4">
+          <label class="form-label d-block">Upload Mode</label>
+          <div class="btn-group" role="group" aria-label="Upload mode toggle">
+            <input
+              type="radio"
+              class="btn-check"
+              name="uploadMode"
+              id="modeBatch"
+              value="batch"
+              checked
+            />
+            <label class="btn btn-outline-primary" for="modeBatch">
+              <i class="fas fa-layer-group me-1"></i> Batch Mode
+              <small class="d-block text-muted"
+                >All photos are the same item</small
+              >
+            </label>
+
+            <input
+              type="radio"
+              class="btn-check"
+              name="uploadMode"
+              id="modeSingle"
+              value="single"
+            />
+            <label class="btn btn-outline-primary" for="modeSingle">
+              <i class="fas fa-images me-1"></i> Single Mode
+              <small class="d-block text-muted"
+                >Each photo is a different item</small
+              >
+            </label>
+          </div>
+        </div>
+
         <div class="mb-4">
           <label for="measurements" class="form-label">Measurements</label>
           <textarea
@@ -905,11 +1080,14 @@
     </div>
 
     <script>
+      // Replace your existing JavaScript with this fixed version, keeping the HTML structure intact
+
+      // Main document elements
       const imageInput = document.getElementById("images");
       const imagePreview = document.getElementById("imagePreview");
       const uploadForm = document.getElementById("uploadForm");
       const result = document.getElementById("result");
-      const description = document.getElementById("description");
+      let description = document.getElementById("description");
       const languagesSelect = document.getElementById("languages");
       const preferredLanguagesSelect =
         document.getElementById("preferredLanguages");
@@ -918,14 +1096,13 @@
       const settingsPanel = document.getElementById("settingsPanel");
       const themeToggle = document.querySelector(".theme-toggle i");
 
-      // Load theme from localStorage
+      // Theme management
       function loadTheme() {
         const theme = localStorage.getItem("theme") || "light";
         document.body.setAttribute("data-theme", theme);
         updateThemeIcon(theme);
       }
 
-      // Toggle theme
       function toggleTheme() {
         const currentTheme = document.body.getAttribute("data-theme");
         const newTheme = currentTheme === "light" ? "dark" : "light";
@@ -934,13 +1111,12 @@
         updateThemeIcon(newTheme);
       }
 
-      // Update theme icon
       function updateThemeIcon(theme) {
         themeToggle.className =
           theme === "light" ? "fas fa-moon" : "fas fa-sun";
       }
 
-      // Load settings from localStorage
+      // Fixed settings management
       function loadSettings() {
         const savedLanguages = localStorage.getItem("preferredLanguages");
         if (savedLanguages) {
@@ -952,8 +1128,13 @@
             option.selected = languages.includes(option.value);
           });
         } else {
-          preferredLanguagesSelect.value = ["en"];
-          languagesSelect.value = ["en"];
+          // Default to English if no saved preferences
+          Array.from(preferredLanguagesSelect.options).forEach((option) => {
+            option.selected = option.value === "en";
+          });
+          Array.from(languagesSelect.options).forEach((option) => {
+            option.selected = option.value === "en";
+          });
         }
 
         const savedStyle = localStorage.getItem("preferredStyle");
@@ -963,7 +1144,6 @@
         }
       }
 
-      // Save settings to localStorage
       function saveSettings() {
         const selectedLanguages = Array.from(
           preferredLanguagesSelect.selectedOptions
@@ -984,12 +1164,11 @@
         showToast("Settings saved successfully!");
       }
 
-      // Toggle settings panel
       function toggleSettings() {
         settingsPanel.classList.toggle("open");
       }
 
-      // Show toast notification
+      // Toast notification
       function showToast(message) {
         const toast = document.createElement("div");
         toast.className = "toast-notification";
@@ -1007,10 +1186,172 @@
         }, 100);
       }
 
-      // Handle image preview
-      imageInput.addEventListener("change", handleImagePreview);
+      // Mode toggle tracking
+      let currentMode = "batch"; // Default to batch mode
 
-      // Drag and drop handlers
+      // Add event listeners for mode toggle buttons
+      document
+        .getElementById("modeBatch")
+        .addEventListener("change", function () {
+          currentMode = "batch";
+          updateImagePreviewLayout();
+        });
+
+      document
+        .getElementById("modeSingle")
+        .addEventListener("change", function () {
+          currentMode = "single";
+          updateImagePreviewLayout();
+        });
+
+      // Improved image preview layout function with animations
+      function updateImagePreviewLayout() {
+        const previewEl = document.getElementById("imagePreview");
+        const containers = previewEl.querySelectorAll(
+          ".image-preview-container"
+        );
+
+        if (currentMode === "single") {
+          // First fade out slightly
+          previewEl.style.opacity = "0.8";
+
+          // After a short delay, change the mode and animate containers
+          setTimeout(() => {
+            previewEl.classList.add("single-mode");
+            previewEl.style.opacity = "1";
+
+            // Add staggered animation for each container
+            containers.forEach((container, index) => {
+              setTimeout(() => {
+                container.classList.add("single-item");
+
+                // Animate the item number appearance
+                const itemLabel = document.createElement("span");
+                itemLabel.className = "item-number";
+                itemLabel.textContent = `#${index + 1}`;
+                container.appendChild(itemLabel);
+
+                setTimeout(() => {
+                  itemLabel.style.opacity = "1";
+                  itemLabel.style.transform = "translateY(0)";
+                }, 50);
+              }, index * 70); // Staggered delay
+            });
+          }, 200);
+        } else {
+          // First fade out slightly
+          previewEl.style.opacity = "0.8";
+
+          // Remove item numbers
+          const itemNumbers = previewEl.querySelectorAll(".item-number");
+          itemNumbers.forEach((item) => {
+            item.style.opacity = "0";
+            item.style.transform = "translateY(10px)";
+          });
+
+          // After a delay, remove single mode
+          setTimeout(() => {
+            previewEl.classList.remove("single-mode");
+            previewEl.style.opacity = "1";
+
+            // Remove the single-item class with a staggered effect
+            containers.forEach((container, index) => {
+              setTimeout(() => {
+                container.classList.remove("single-item");
+
+                // Remove item numbers after animation
+                const itemNumber = container.querySelector(".item-number");
+                if (itemNumber) {
+                  container.removeChild(itemNumber);
+                }
+              }, index * 40);
+            });
+          }, 200);
+        }
+      }
+
+      // Fixed handleImagePreview function
+      function handleImagePreview() {
+        // Clear existing previews
+        imagePreview.innerHTML = "";
+
+        // Get all files from the input
+        const files = Array.from(imageInput.files || []);
+
+        if (files.length === 0) {
+          imagePreview.style.display = "none";
+          return;
+        }
+
+        // Limit to 10 images
+        if (files.length > 10) {
+          showToast("You can upload up to 10 images only.");
+          // Reset file input
+          imageInput.value = "";
+          return;
+        }
+
+        // Show the preview container
+        imagePreview.style.display = "flex";
+
+        // Process each file
+        files.forEach((file, index) => {
+          if (file.type.startsWith("image/")) {
+            const reader = new FileReader();
+
+            reader.onload = (e) => {
+              const container = document.createElement("div");
+              container.className = "image-preview-container";
+              container.dataset.index = index;
+
+              const img = document.createElement("img");
+              img.src = e.target.result;
+              img.className = "preview-image";
+              img.alt = file.name;
+
+              const removeBtn = document.createElement("button");
+              removeBtn.className = "remove-image";
+              removeBtn.innerHTML = "×";
+              removeBtn.onclick = function (event) {
+                event.preventDefault();
+                event.stopPropagation();
+                removeImage(parseInt(container.dataset.index));
+              };
+
+              container.appendChild(img);
+              container.appendChild(removeBtn);
+              imagePreview.appendChild(container);
+            };
+
+            reader.readAsDataURL(file);
+          }
+        });
+
+        // Update layout based on mode
+        updateImagePreviewLayout();
+      }
+
+      // Fixed removeImage function for accurate index handling
+      function removeImage(indexToRemove) {
+        // Create a new DataTransfer object
+        const dt = new DataTransfer();
+        const files = Array.from(imageInput.files);
+
+        // Add all files except the one to remove
+        files.forEach((file, index) => {
+          if (index !== indexToRemove) {
+            dt.items.add(file);
+          }
+        });
+
+        // Update the input's files
+        imageInput.files = dt.files;
+
+        // Regenerate the preview with updated indices
+        handleImagePreview();
+      }
+
+      // Fix the drag and drop functionality
       const uploadArea = document.getElementById("uploadArea");
 
       uploadArea.addEventListener("dragover", (e) => {
@@ -1025,58 +1366,48 @@
       uploadArea.addEventListener("drop", (e) => {
         e.preventDefault();
         uploadArea.classList.remove("dragover");
-        imageInput.files = e.dataTransfer.files;
-        handleImagePreview();
-      });
 
-      function handleImagePreview() {
-        imagePreview.innerHTML = "";
-        Array.from(imageInput.files).forEach((file, index) => {
-          if (file.type.startsWith("image/")) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-              const container = document.createElement("div");
-              container.className = "image-preview-container";
-
-              const img = document.createElement("img");
-              img.src = e.target.result;
-              img.className = "preview-image";
-
-              const removeBtn = document.createElement("button");
-              removeBtn.className = "remove-image";
-              removeBtn.innerHTML = "×";
-              removeBtn.onclick = () => removeImage(index);
-
-              container.appendChild(img);
-              container.appendChild(removeBtn);
-              imagePreview.appendChild(container);
-            };
-            reader.readAsDataURL(file);
-          }
-        });
-      }
-
-      function removeImage(index) {
-        const dt = new DataTransfer();
-        const { files } = imageInput;
-
-        for (let i = 0; i < files.length; i++) {
-          if (i !== index) {
-            dt.items.add(files[i]);
-          }
+        // Limit to 10 images
+        if (e.dataTransfer.files.length > 10) {
+          showToast("You can upload up to 10 images only.");
+          return;
         }
 
-        imageInput.files = dt.files;
-        handleImagePreview();
-      }
+        // Handle multiple files from drop
+        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+          // Create a DataTransfer to manipulate the FileList
+          const dt = new DataTransfer();
 
-      // Handle form submission
+          // Add all dropped files
+          Array.from(e.dataTransfer.files).forEach((file) => {
+            dt.items.add(file);
+          });
+
+          // Set the files property
+          imageInput.files = dt.files;
+          handleImagePreview();
+        }
+      });
+
+      // Ensure these are called when document is loaded
+      document.addEventListener("DOMContentLoaded", function () {
+        // Add event listener for file input changes
+        imageInput.addEventListener("change", function (e) {
+          handleImagePreview();
+        });
+
+        loadSettings();
+        loadTheme();
+        setActiveNavLink();
+      });
+
+      // Add this to your JavaScript after the DOM content loaded event listener
+
+      // Form submission handler
       uploadForm.addEventListener("submit", async (e) => {
         e.preventDefault();
 
-        const formData = new FormData();
         const files = imageInput.files;
-
         if (!files || files.length === 0) {
           showToast("Please select at least one image");
           return;
@@ -1085,6 +1416,7 @@
         const selectedLanguages = Array.from(
           languagesSelect.selectedOptions
         ).map((option) => option.value);
+
         if (selectedLanguages.length === 0) {
           showToast("Please select at least one language");
           return;
@@ -1095,6 +1427,24 @@
         const submitButton = uploadForm.querySelector('button[type="submit"]');
         submitButton.disabled = true;
         submitButton.innerHTML = "Generating...";
+
+        if (currentMode === "batch") {
+          // Process all images as one item
+          await processBatchUpload(files, selectedLanguages);
+        } else {
+          // Process each image as separate item
+          await processSingleUpload(files, selectedLanguages);
+        }
+
+        // Remove loading state
+        uploadForm.classList.remove("loading");
+        submitButton.disabled = false;
+        submitButton.innerHTML = "Generate Description";
+      });
+
+      // Function to process batch upload (all images are the same item)
+      async function processBatchUpload(files, selectedLanguages) {
+        const formData = new FormData();
 
         for (let i = 0; i < files.length; i++) {
           formData.append("images", files[i]);
@@ -1117,8 +1467,27 @@
           const data = await response.json();
 
           if (response.ok) {
-            description.textContent = data.description;
+            // Clear out the result area and set up for a standard single description
+            result.innerHTML = `
+              <h3>Generated Description</h3>
+              <div class="card">
+                <div class="card-body">
+                  <div id="description" class="card-text">${data.description}</div>
+                  <div class="copy-btn-wrapper">
+                    <button class="btn-copy" onclick="copyToClipboard()">
+                      <i class="fas fa-clipboard"></i> Copy to Clipboard
+                    </button>
+                  </div>
+                </div>
+              </div>
+            `;
+
+            // Reset the description reference
+            description = document.getElementById("description");
+
+            // IMPORTANT: First make it display block, then reset 'show' class
             result.style.display = "block";
+            result.classList.remove("show"); // Remove any existing show class
 
             // Add animation class after a brief delay
             setTimeout(() => {
@@ -1132,93 +1501,172 @@
         } catch (error) {
           console.error("Error:", error);
           showToast("Error generating description. Please try again.");
-        } finally {
-          // Remove loading state
-          uploadForm.classList.remove("loading");
-          submitButton.disabled = false;
-          submitButton.innerHTML = "Generate Description";
         }
-      });
+      }
 
-      function copyToClipboard() {
-        const copyBtn = document.querySelector(".btn-copy");
-        const originalText = copyBtn.innerHTML;
-        const textToCopy = description.textContent || description.innerText;
+      // Function to process single upload (each image is a different item)
+      async function processSingleUpload(files, selectedLanguages) {
+        // Clear the entire result area and recreate base structure
+        result.innerHTML = `
+          <h3>Generated Descriptions</h3>
+          <div class="card">
+            <div class="card-body">
+              <div id="description"></div>
+            </div>
+          </div>
+        `;
 
-        // Fallback method for browsers with limited clipboard support
-        if (!navigator.clipboard) {
-          const textArea = document.createElement("textarea");
-          textArea.value = textToCopy;
-          textArea.style.position = "fixed"; // Avoid scrolling to bottom
-          document.body.appendChild(textArea);
-          textArea.focus();
-          textArea.select();
+        // Reset the description reference
+        description = document.getElementById("description");
+
+        // IMPORTANT: Make it display block, then reset 'show' class
+        result.style.display = "block";
+        result.classList.remove("show"); // Reset the show class
+
+        // Process each image individually
+        let successCount = 0;
+
+        for (let i = 0; i < files.length; i++) {
+          const formData = new FormData();
+          formData.append("images", files[i]);
+          formData.append(
+            "measurements",
+            document.getElementById("measurements").value
+          );
+          formData.append("style", document.getElementById("style").value);
+          formData.append(
+            "category",
+            document.getElementById("category").value
+          );
+          formData.append("languages", JSON.stringify(selectedLanguages));
 
           try {
-            const successful = document.execCommand("copy");
-            copyBtn.classList.add("copy-success");
-            copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            const response = await fetch("/generate", {
+              method: "POST",
+              body: formData,
+            });
 
-            setTimeout(() => {
-              copyBtn.classList.remove("copy-success");
-              copyBtn.innerHTML = originalText;
-            }, 2000);
+            const data = await response.json();
 
-            showToast("Description copied to clipboard!");
-          } catch (err) {
-            console.error("Fallback: Clipboard copy failed", err);
-            showToast("Failed to copy to clipboard");
+            if (response.ok) {
+              // Create a div for this item's description
+              const itemDesc = document.createElement("div");
+              itemDesc.className = "item-description mb-4";
+
+              // Add a separator between items except for the first one
+              if (i > 0) {
+                const separator = document.createElement("hr");
+                itemDesc.appendChild(separator);
+              }
+
+              // Add item number
+              const itemTitle = document.createElement("h4");
+              itemTitle.className = "item-title";
+              itemTitle.textContent = `Item ${i + 1}`;
+              itemDesc.appendChild(itemTitle);
+
+              // Add description text
+              const descText = document.createElement("div");
+              descText.className = "description-text";
+              descText.textContent = data.description;
+              itemDesc.appendChild(descText);
+
+              // Add individual copy button for this item
+              const copyBtnWrapper = document.createElement("div");
+              copyBtnWrapper.className = "copy-btn-wrapper";
+
+              const copyBtn = document.createElement("button");
+              copyBtn.className = "btn-copy btn-copy-item";
+              copyBtn.innerHTML =
+                '<i class="fas fa-clipboard"></i> Copy This Item';
+              copyBtn.onclick = function () {
+                copyItemToClipboard(data.description, copyBtn);
+              };
+
+              copyBtnWrapper.appendChild(copyBtn);
+              itemDesc.appendChild(copyBtnWrapper);
+
+              // Add to the main description container
+              description.appendChild(itemDesc);
+              successCount++;
+            }
+          } catch (error) {
+            console.error(`Error for item ${i + 1}:`, error);
           }
-
-          document.body.removeChild(textArea);
-          return;
         }
 
-        // Modern clipboard API method
+        // Also add a "Copy All" button if we have multiple descriptions
+        if (successCount > 1) {
+          const copyAllWrapper = document.createElement("div");
+          copyAllWrapper.className = "copy-btn-wrapper copy-all-wrapper";
+
+          const copyAllBtn = document.createElement("button");
+          copyAllBtn.className = "btn-copy btn-copy-all";
+          copyAllBtn.innerHTML =
+            '<i class="fas fa-copy"></i> Copy All Descriptions';
+          copyAllBtn.onclick = copyToClipboard;
+
+          copyAllWrapper.appendChild(copyAllBtn);
+          description.appendChild(copyAllWrapper);
+        }
+
+        // Add animation class after a brief delay
+        setTimeout(() => {
+          result.classList.add("show");
+        }, 50);
+
+        showToast(`Generated ${successCount} of ${files.length} descriptions!`);
+      }
+
+      // Add helper function to copy individual item text
+      function copyItemToClipboard(text, buttonElement) {
         navigator.clipboard
-          .writeText(textToCopy)
+          .writeText(text)
           .then(() => {
+            buttonElement.classList.add("copy-success");
+            buttonElement.innerHTML = '<i class="fas fa-check"></i> Copied!';
+
+            setTimeout(() => {
+              buttonElement.classList.remove("copy-success");
+              buttonElement.innerHTML =
+                '<i class="fas fa-clipboard"></i> Copy This Item';
+            }, 2000);
+
+            showToast("Item description copied to clipboard!");
+          })
+          .catch((err) => {
+            console.error("Failed to copy: ", err);
+            showToast("Failed to copy to clipboard.");
+          });
+      }
+
+      // Add this function to copy text to clipboard
+      function copyToClipboard() {
+        const text = description.textContent;
+        navigator.clipboard
+          .writeText(text)
+          .then(() => {
+            const copyBtn = document.querySelector(".btn-copy");
             copyBtn.classList.add("copy-success");
             copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
 
             setTimeout(() => {
               copyBtn.classList.remove("copy-success");
-              copyBtn.innerHTML = originalText;
+              copyBtn.innerHTML =
+                '<i class="fas fa-clipboard"></i> Copy to Clipboard';
             }, 2000);
 
             showToast("Description copied to clipboard!");
           })
           .catch((err) => {
-            console.error("Failed to copy text: ", err);
-            showToast("Failed to copy to clipboard");
+            console.error("Failed to copy: ", err);
+            showToast("Failed to copy to clipboard.");
           });
       }
 
-      // Load theme and settings when page loads
-      loadTheme();
-      loadSettings();
+      // Add this function above your DOMContentLoaded event listener
 
-      // Add these functions to your existing script section
-
-      // Toggle navbar for mobile
-      function toggleNavbar() {
-        const navbarMenu = document.getElementById("navbarMenu");
-        navbarMenu.classList.toggle("show");
-      }
-
-      // Add scroll effect to navbar
-      window.addEventListener("scroll", function () {
-        const navbar = document.querySelector(".navbar");
-        if (window.scrollY > 50) {
-          navbar.style.padding = "0.5rem 0";
-          navbar.style.boxShadow = "0 4px 20px var(--shadow-color)";
-        } else {
-          navbar.style.padding = "0.75rem 0";
-          navbar.style.boxShadow = "0 2px 10px var(--shadow-color)";
-        }
-      });
-
-      // Set active nav link based on current page
+      // Function to set active navigation link based on current URL
       function setActiveNavLink() {
         const currentPath = window.location.pathname;
         const navLinks = document.querySelectorAll(".nav-link");
@@ -1241,15 +1689,6 @@
           }
         });
       }
-
-      // Simple help modal function (if you want to implement it)
-      function showHelp() {
-        alert("Help information for Vintly - Coming Soon!");
-        // You could implement a proper modal similar to the one in templates.html
-      }
-
-      // Call this function when page loads
-      document.addEventListener("DOMContentLoaded", setActiveNavLink);
     </script>
   </body>
 </html>
