@@ -33,7 +33,7 @@ A powerful tool that generates professional, multilingual descriptions for Vinte
 ## Video Demo
 
 <div align="center">
-  <img src="img/showcase.gif" alt="Vintly Demo">
+  <img src="img/demo.gif" alt="Vintly Demo">
 </div>
 
 ### ⚡ Quick Windows Installation ⚡
