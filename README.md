@@ -33,7 +33,7 @@ Quick? Effortless? Simple to use? That's Vintly, a powerful tool that generates 
 ## Video Demo
 
 <div align="center">
-  <img src="img/showcase.gif" alt="Vintly Demo">
+  <img src="img/demo.gif" alt="Vintly Demo">
 </div>
 
 ### ⚡ Quick Windows Installation ⚡

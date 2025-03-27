@@ -33,10 +33,20 @@ def load_templates():
     if os.path.exists(app.config['TEMPLATES_FILE']):
         with open(app.config['TEMPLATES_FILE'], 'r', encoding='utf-8') as f:
             templates = json.load(f)
-            # Convert Unicode escape sequences to actual emojis
+            # Better emoji handling
             for template in templates:
                 if 'description' in template:
-                    template['description'] = template['description'].encode('utf-8').decode('unicode-escape')
+                    # Try multiple approaches to handle emojis properly
+                    try:
+                        # First try standard unicode_escape
+                        template['description'] = template['description'].encode('utf-8').decode('unicode_escape')
+                    except UnicodeDecodeError:
+                        try:
+                            # If that fails, try with 'surrogateescape' error handler
+                            template['description'] = template['description'].encode('utf-8', 'surrogateescape').decode('utf-8')
+                        except:
+                            # If all else fails, leave as is
+                            pass
             return templates
     return []
 
@@ -186,7 +196,16 @@ def generate():
         except:
             pass
 
-    return jsonify({'description': description})
+    # Ensure correct content type and encoding in response
+    response = jsonify({'description': description})
+    response.headers['Content-Type'] = 'application/json; charset=utf-8'
+    return response
+
+# Add this to ensure proper encoding in all responses
+@app.after_request
+def add_header(response):
+    response.headers['Content-Type'] = response.headers.get('Content-Type', 'text/html; charset=utf-8')
+    return response
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001, debug=True)
