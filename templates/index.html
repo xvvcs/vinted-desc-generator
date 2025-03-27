@@ -712,7 +712,7 @@
 
       .btn-copy:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 10px var(--shadow-color);
+        box-shadow: 0 6px 10px var (--shadow-color);
       }
 
       .btn-copy i {
@@ -1318,6 +1318,12 @@
         // Show the preview container
         imagePreview.style.display = "flex";
 
+        // Count how many image files we need to process
+        let loadedImages = 0;
+        const totalImagesToLoad = files.filter((file) =>
+          file.type.startsWith("image/")
+        ).length;
+
         // Process each file
         files.forEach((file, index) => {
           if (file.type.startsWith("image/")) {
@@ -1345,14 +1351,23 @@
               container.appendChild(img);
               container.appendChild(removeBtn);
               imagePreview.appendChild(container);
+
+              // Increment our counter
+              loadedImages++;
+
+              // Only update layout after ALL images have loaded
+              if (loadedImages === totalImagesToLoad) {
+                // Now it's safe to update the layout
+                updateImagePreviewLayout();
+              }
             };
 
             reader.readAsDataURL(file);
           }
         });
 
-        // Update layout based on mode
-        updateImagePreviewLayout();
+        // Remove this call, as we now call it when all images have loaded
+        // updateImagePreviewLayout();
       }
 
       // Fixed removeImage function for accurate index handling
