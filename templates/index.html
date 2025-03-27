@@ -802,22 +802,11 @@
 
       .image-preview-container.single-item {
         padding: 8px;
+        padding-bottom: 12px;
         border: 2px solid var(--primary-color);
         border-radius: 12px;
         position: relative;
         animation: singleItemAppear 0.4s forwards;
-      }
-
-      .image-preview-container.single-item::before {
-        content: "Item";
-        position: absolute;
-        top: -10px;
-        left: 10px;
-        background: var(--card-background);
-        padding: 0 8px;
-        font-size: 0.75rem;
-        color: var(--primary-color);
-        font-weight: 500;
       }
 
       .item-description {
@@ -891,6 +880,25 @@
         }
         100% {
           transform: scale(1);
+        }
+      }
+
+      .item-measurements {
+        width: 100%;
+        opacity: 0;
+        transform: translateY(10px);
+        transition: opacity 0.3s ease, transform 0.3s ease;
+        animation: fadeIn 0.4s ease-out forwards;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
         }
       }
     </style>
@@ -1231,6 +1239,21 @@
                 itemLabel.textContent = `#${index + 1}`;
                 container.appendChild(itemLabel);
 
+                // Add individual measurement field for this item
+                if (!container.querySelector(".item-measurements")) {
+                  const measurementField = document.createElement("div");
+                  measurementField.className = "item-measurements mt-2";
+                  measurementField.innerHTML = `
+                    <textarea 
+                      class="form-control form-control-sm" 
+                      id="measurements-item-${index}" 
+                      placeholder="Measurements for item #${index + 1}" 
+                      rows="2"
+                    ></textarea>
+                  `;
+                  container.appendChild(measurementField);
+                }
+
                 setTimeout(() => {
                   itemLabel.style.opacity = "1";
                   itemLabel.style.transform = "translateY(0)";
@@ -1242,11 +1265,12 @@
           // First fade out slightly
           previewEl.style.opacity = "0.8";
 
-          // Remove item numbers
-          const itemNumbers = previewEl.querySelectorAll(".item-number");
-          itemNumbers.forEach((item) => {
+          // Remove item numbers and measurement fields
+          const itemElements = previewEl.querySelectorAll(
+            ".item-number, .item-measurements"
+          );
+          itemElements.forEach((item) => {
             item.style.opacity = "0";
-            item.style.transform = "translateY(10px)";
           });
 
           // After a delay, remove single mode
@@ -1259,11 +1283,11 @@
               setTimeout(() => {
                 container.classList.remove("single-item");
 
-                // Remove item numbers after animation
-                const itemNumber = container.querySelector(".item-number");
-                if (itemNumber) {
-                  container.removeChild(itemNumber);
-                }
+                // Remove item elements after animation
+                const itemElements = container.querySelectorAll(
+                  ".item-number, .item-measurements"
+                );
+                itemElements.forEach((el) => container.removeChild(el));
               }, index * 40);
             });
           }, 200);
@@ -1529,10 +1553,23 @@
         for (let i = 0; i < files.length; i++) {
           const formData = new FormData();
           formData.append("images", files[i]);
-          formData.append(
-            "measurements",
-            document.getElementById("measurements").value
-          );
+
+          // Get the individual measurements for this item if in single mode
+          if (currentMode === "single") {
+            const itemMeasurement = document.getElementById(
+              `measurements-item-${i}`
+            );
+            formData.append(
+              "measurements",
+              itemMeasurement ? itemMeasurement.value : ""
+            );
+          } else {
+            formData.append(
+              "measurements",
+              document.getElementById("measurements").value
+            );
+          }
+
           formData.append("style", document.getElementById("style").value);
           formData.append(
             "category",
