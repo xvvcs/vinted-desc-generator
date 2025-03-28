@@ -27,7 +27,7 @@ if not api_key:
     raise ValueError("GOOGLE_API_KEY environment variable is not set")
 
 genai.configure(api_key=api_key)
-model = genai.GenerativeModel('gemini-1.5-flash')
+model = genai.GenerativeModel('gemini-2.0-flash')
 
 def load_templates():
     if os.path.exists(app.config['TEMPLATES_FILE']):
@@ -103,6 +103,7 @@ def generate_description(images, measurements, style, category='clothing', langu
     5. Ensure measurements and technical details are consistent across languages
     6. Use emojis naturally and appropriately, similar to the example templates
     7. Do not use Unicode escape sequences or raw emoji codes - use actual emoji characters
+    8. Give only the answer, no chit-chat or other unnecessary information
 
     Hashtag Instructions (VERY IMPORTANT):
     1. Include a comprehensive set of hashtags at the end of the description
