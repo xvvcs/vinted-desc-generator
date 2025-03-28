@@ -12,20 +12,57 @@ REM Check if Python is installed
 echo Checking for Python...
 python --version >nul 2>&1
 if %ERRORLEVEL% NEQ 0 (
-  echo [ERROR] Python is not installed or not in PATH.
-  echo Please install Python 3.12.9 from https://www.python.org/downloads/
-  echo IMPORTANT: Check "Add Python to PATH" during installation.
+  echo [WARNING] Python is not installed or not in PATH.
   echo.
-  pause
-  exit /b 1
+  echo We will now download and install Python 3.12.9 for you.
+  echo.
+  
+  set PYTHON_URL=https://www.python.org/ftp/python/3.12.9/python-3.12.9-amd64.exe
+  set INSTALLER_PATH=%TEMP%\python-3.12.9-installer.exe
+  
+  echo Downloading Python 3.12.9...
+  powershell -Command "(New-Object Net.WebClient).DownloadFile('%PYTHON_URL%', '%INSTALLER_PATH%')"
+  
+  if %ERRORLEVEL% NEQ 0 (
+    echo [ERROR] Failed to download Python installer.
+    echo Please download and install Python 3.12.9 manually from https://www.python.org/downloads/
+    echo Then run this setup again.
+    echo.
+    pause
+    exit /b 1
+  )
+  
+  echo [SUCCESS] Download complete.
+  echo.
+  echo Installing Python 3.12.9...
+  echo This may take a few minutes. Please wait...
+  
+  REM Run the installer with appropriate flags
+  start /wait "" "%INSTALLER_PATH%" /quiet InstallAllUsers=1 PrependPath=1 Include_test=0
+  
+  echo.
+  echo Verifying installation...
+  python --version >nul 2>&1
+  
+  if %ERRORLEVEL% NEQ 0 (
+    echo [ERROR] Python installation failed or PATH was not updated correctly.
+    echo Please try installing Python 3.12.9 manually from https://www.python.org/downloads/
+    echo IMPORTANT: Check "Add Python to PATH" during installation.
+    echo.
+    pause
+    exit /b 1
+  )
+  
+  echo [SUCCESS] Python 3.12.9 has been installed.
+  echo.
+) else (
+  echo [SUCCESS] Python is already installed.
+  echo.
 )
-
-echo [SUCCESS] Python is installed.
-echo.
 
 REM Install dependencies
 echo Installing required packages...
-pip install flask==3.0.2 Werkzeug==3.0.1 python-dotenv==1.0.1 google-generativeai==0.3.2 Pillow==9.5.0 flask-sqlalchemy==3.1.1 flask-migrate==4.0.5
+pip install flask==3.1.0 Werkzeug==3.1.3 python-dotenv==1.1.0 google-generativeai==0.8.4 Pillow==11.1.0 flask-sqlalchemy==3.1.1 flask-migrate==4.0.5
 if %ERRORLEVEL% NEQ 0 (
   echo [WARNING] Some packages may not have installed correctly.
   echo We'll continue anyway, but you might encounter issues.
