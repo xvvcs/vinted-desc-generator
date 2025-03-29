@@ -437,7 +437,7 @@ body {
   z-index: 15; /* Increase z-index to ensure it's above other elements */
 }
 
-/* Settings Panel */
+/* Settings Panel */ 
 .settings-panel {
   position: fixed;
   top: 0;

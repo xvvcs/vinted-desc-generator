@@ -8,10 +8,11 @@ Quick? Effortless? Simple to use? That's Vintly, a powerful tool that generates 
 
 <div align="center">
   
-[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
-[![Flask](https://img.shields.io/badge/Flask-3.0.2-lightgrey.svg)](https://flask.palletsprojects.com/)
+[![Python](https://img.shields.io/badge/Python-3.12.9-blue.svg)](https://www.python.org/)
+[![Flask](https://img.shields.io/badge/Flask-3.1.0-lightgrey.svg)](https://flask.palletsprojects.com/)
 [![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-3.1.1-red.svg)](https://www.sqlalchemy.org/)
-[![Google Gemini AI](https://img.shields.io/badge/Gemini_AI-0.3.2-green.svg)](https://ai.google.dev/)
+[![Google Gemini AI](https://img.shields.io/badge/Gemini_AI-0.8.4-green.svg)](https://ai.google.dev/)
+[![Pillow](https://img.shields.io/badge/Pillow-11.1.0-orange.svg)](https://python-pillow.org/)
 [![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3-purple.svg)](https://getbootstrap.com/)
 [![JavaScript](https://img.shields.io/badge/JavaScript-ES6-yellow.svg)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
 
@@ -40,7 +41,6 @@ Quick? Effortless? Simple to use? That's Vintly, a powerful tool that generates 
 
 For Windows users, I've created a simplified installation process:
 
-0. Make sure you have python 3.12.9 installed [Python's download link](https://www.python.org/downloads/release/python-3129/) (follow instructions and **add to env PATH**, or if you struggle go follow prerequisites in next section)
 1. Download and extract the ZIP file
 2. Double-click on `setup_windows.bat`
 3. Follow the prompts to install dependencies and enter your Google API key
@@ -50,6 +50,29 @@ For Windows users, I've created a simplified installation process:
 The setup script takes care of everything - no need to manually create files or edit configurations!
 
 Need more details? Follow the complete installation steps below.
+
+### ⚡ Quick Mac/Linux Installation ⚡
+
+For Mac/Linux users, I've created a streamlined setup process:
+
+1. Download and extract the ZIP file
+2. Open Terminal and navigate to the extracted folder
+3. Make the scripts executable: `chmod +x setup_mac.sh run-vintly.sh`
+4. Run the setup script: `./setup_mac.sh`
+5. The script will check if Python 3.12.9 is installed:
+
+- If not installed and you have Homebrew, it will automatically install Python 3.12.9
+- If Homebrew is not found, it will offer to install it for you
+- Follow the prompts to complete the Python installation
+
+6. Follow the remaining prompts to:
+
+- Create a virtual environment (recommended)
+- Install dependencies
+- Enter your Google API key
+
+7. When setup completes, choose "Y" to start Vintly immediately, or
+8. Run `./run-vintly.sh` anytime you want to start the application
 
 ## 💻 Installation
 
